@@ -1,5 +1,5 @@
 local M = {}
-local configs = vim.g.hexowiki_rmd_auto_trans
+local configs = vim.g.hugowiki_rmd_auto_trans
 
 if not configs.enable then
     return M

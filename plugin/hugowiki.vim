@@ -1,27 +1,27 @@
-" Vim plugin for writing hexo posts
+" Vim plugin for writing hugo posts
 " Maintainer: Qihuan Liu <liu.qihuan@outlook.com>
 
-if exists('g:loaded_hexowiki') || &compatible
+if exists('g:loaded_hugowiki') || &compatible
   finish
 endif
-let g:loaded_hexowiki = 1
+let g:loaded_hugowiki = 1
 
 "---------------------------------------\ config /---------------------------------------
-let g:hexowiki_home = get(g:, 'hexowiki_home', '~/blog/source/_posts')
-let g:hexowiki_home =
-    \ strgetchar(g:hexowiki_home, strlen(g:hexowiki_home)) == '/'
-    \ ? g:hexowiki_home[:-2] : g:hexowiki_home
+let g:hugowiki_home = get(g:, 'hugowiki_home')
+let g:hugowiki_home =
+    \ strgetchar(g:hugowiki_home, strlen(g:hugowiki_home)) == '/'
+    \ ? g:hugowiki_home[:-2] : g:hugowiki_home
 
-let g:hexowiki_try_init_file = get(g:, 'hexowiki_try_init_file', 0)
-let g:hexowiki_follow_after_create = get(g:, 'hexowiki_follow_after_create', 0)
-let g:hexowiki_use_imaps = get(g:, 'hexowiki_use_imaps', 1)
-let g:hexowiki_disable_fold = get(g:, 'hexowiki_disable_fold', 0)
-let g:hexowiki_header_items = get(g:, 'hexowiki_header_items', [
+let g:hugowiki_try_init_file = get(g:, 'hugowiki_try_init_file', 0)
+let g:hugowiki_follow_after_create = get(g:, 'hugowiki_follow_after_create', 0)
+let g:hugowiki_use_imaps = get(g:, 'hugowiki_use_imaps', 1)
+let g:hugowiki_disable_fold = get(g:, 'hugowiki_disable_fold', 0)
+let g:hugowiki_header_items = get(g:, 'hugowiki_header_items', [
     \ 'title', 'comments', 'mathjax', 'date',
     \ 'tags', 'categories', 'coauthor'
     \ ])
-let g:hexowiki_wrap = get(g:, 'hexowiki_wrap', 1)
-let g:hexowiki_auto_save = get(g:, 'hexowiki_auto_save', 1)
+let g:hugowiki_wrap = get(g:, 'hugowiki_wrap', 1)
+let g:hugowiki_auto_save = get(g:, 'hugowiki_auto_save', 1)
 
 "---------------------------------\ initialize a file /----------------------------------
 function! s:is_ascii(pos)
@@ -116,12 +116,12 @@ endfunction
 
 function! s:init_file() abort
     " if file doesn't exist and file is in right dir
-    if glob(expand('%:p')) == '' && expand('%:p:h') == expand(g:hexowiki_home)
+    if glob(expand('%:p')) == '' && expand('%:p:h') == expand(g:hugowiki_home)
         " TODO: detect page type
         let l:type = 'post'
 
-        echo 'hexo new ' . l:type . ' "' . expand('%:t:r') . '" ...'
-        call system('hexo new ' . l:type . ' "' . expand('%:t:r') . '"')
+        echo 'hugo new ' . l:type . ' "' . expand('%:t:r') . '" ...'
+        call system('hugo new ' . l:type . ' "' . expand('%:t:r') . '"')
         edit
     endif
 endfunction
@@ -180,21 +180,21 @@ function! s:followLink() abort
     if matchb == 0 && matche == 0
         " Create a link under cursor
         let new_file = s:createLink(mode())
-        if new_file != '' && g:hexowiki_follow_after_create
+        if new_file != '' && g:hugowiki_follow_after_create
             execute 'edit ' . new_file
         endif
     " Jump somewhere according to `link_type`
     elseif link_type == 0
         " Go to the the file specified by the link.
         let match_list = matchlist(line[matchb : matche-1], '{%\s*post_link\s\+\([^\u0020\u0009]\+\).\{-1,}%}')
-        execute 'edit ' . g:hexowiki_home . match_list[1] . '.md'
-        if g:hexowiki_try_init_file == 1
+        execute 'edit ' . g:hugowiki_home . match_list[1] . '.md'
+        if g:hugowiki_try_init_file == 1
             call s:init_file()
         endif
     elseif link_type == 1
         let m = matchlist(line[matchb:matche-1], s:link_patterns[link_type])
         execute 'edit ' . m[1] . '.md'
-        if g:hexowiki_try_init_file == 1
+        if g:hugowiki_try_init_file == 1
             call s:init_file()
         endif
         if m[3] != '#' && m[3][0] == '#'
@@ -202,9 +202,6 @@ function! s:followLink() abort
         endif
     elseif link_type == 2
         let m = matchlist(line[matchb:matche-1], s:link_patterns[link_type])
-        if m[2][1:] == "more"
-            call search("^<!-- more -->$", 's')
-        endif
         " echo tolower(substitute(m[2][1:], '-', ' ', 'g'))
         if !search('#\+\s\+' . tolower(substitute(m[2][1:], '-', '[ -]', 'g')) . '$', 's')
             if !search('{%\stabs\s' . tolower(substitute(m[2][1:], '-', '[ -]', 'g')) . ',\d\s%}', 's')
@@ -230,7 +227,7 @@ function! s:findLink(foreward)
 endfunction
 
 "--------------------------------------\ folding /--------------------------------------
-function! g:hexowiki#foldexpr(lnum)
+function! g:hugowiki#foldexpr(lnum)
     let syn_name = synIDattr(synID(a:lnum, match(getline(a:lnum), '\S') + 1, 1), "name")
     let syn_name_eol = synIDattr(synID(a:lnum, match(getline(a:lnum), '\S\s*$')+1, 1), "name")
 
@@ -258,9 +255,9 @@ function! g:hexowiki#foldexpr(lnum)
     "     return 'a1'
     " endif
 
-    " Hexo tag
+    " hugo tag
     if syn_name == 'HWTagDelimiter'
-        let name_pattern = '\('.join(g:hexowiki_multiline_tags_with_end, '\|').'\)'
+        let name_pattern = '\('.join(g:hugowiki_multiline_tags_with_end, '\|').'\)'
         if getline(a:lnum) =~# '^{%\s\+' . name_pattern . '.*%}'
             return 'a1'
         elseif getline(a:lnum) =~# '^{%\s\+end' . name_pattern . '\s\+%}'
@@ -297,7 +294,7 @@ function! g:hexowiki#foldexpr(lnum)
     return '='
 endfunction
 
-function! g:hexowiki#foldtext() abort
+function! g:hugowiki#foldtext() abort
     let syn_name = synIDattr(synID(v:foldstart, match(getline(v:foldstart), '\S')+1, 1), "name")
     if syn_name == 'HWHeader'
         let line = substitute(getline(v:foldstart + 1), '^\w*: ', '', '')
@@ -355,7 +352,7 @@ noremap <unique> <SID>ShiftTitlesInc <Cmd>call <SID>shiftTitles(1)<CR>
 noremap <unique> <SID>ShiftTitlesDec <Cmd>call <SID>shiftTitles(0)<CR>
 
 "--------------------------------------\ autocmd /--------------------------------------
-if g:hexowiki_auto_save
+if g:hugowiki_auto_save
     augroup autosave
         au!
         au InsertLeave *.md,*.markdown,*.Rmd silent update
@@ -363,4 +360,20 @@ if g:hexowiki_auto_save
     augroup END
 endif
 
+function! g:Conv()
+    %s/{\@<!{%/{{%/g
+    %s/%}}\@!/%}}/g
+    %s/++\(.\{-}\)++/<ins>\1<\/ins>/g
+    %s/==\(.\{-}\)==/<mark>\1<\/mark>/g
+    %s/<a href="{{% post_path \(\S*\) %}}\(.\{-}\)">\(.\{-}\)<\/a>/[\3]({{< relref "\1\2" >}})/g
+    %s/?highlight=.\{-}"/"/g
+    %s/{{% note/{{% tab/g
+    %s/{{% endnote/{{% \/tab/g
+    %s/{{% end\(\S*\) %}}/{{% \/\1 %}}/g
+    %s/endhzl/\/hzl/g
+    %s/hzl \(\S\) %}}/hzl "\1" %}}/g
+    %s/\^\(.\{-}\)\^/<sup>\1<\/sup>/g
+    %s/\(\\\|\~\)\@<!\~\([^~ ]\{1,}\)\~\~\@!/<sub>\2<\/sub>/g
+    " sub ?
+endfunction
 

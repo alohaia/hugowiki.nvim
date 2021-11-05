@@ -1,18 +1,18 @@
-" Vim plugin for writing hexo posts
+" Vim plugin for writing hugo posts
 " Maintainer: Qihuan Liu <liu.qihuan@outlook.com>
 
-if exists('b:did_hexowiki') || &compatible
+if exists('b:did_hugowiki') || &compatible
   finish
 endif
-let b:did_hexowiki = 1
+let b:did_hugowiki = 1
 
-if g:hexowiki_disable_fold == 0
+if g:hugowiki_disable_fold == 0
     setlocal foldmethod=expr
-    setlocal foldexpr=hexowiki#foldexpr(v:lnum)
-    setlocal foldtext=hexowiki#foldtext()
+    setlocal foldexpr=hugowiki#foldexpr(v:lnum)
+    setlocal foldtext=hugowiki#foldtext()
 endif
 
-if g:hexowiki_wrap == 1
+if g:hugowiki_wrap == 1
     setlocal wrap
 endif
 
@@ -35,7 +35,7 @@ if !hasmapto('<Plug>ShiftTitlesDec')
     nmap <nowait> <buffer> <leader><< <Plug>ShiftTitlesDec
 endif
 
-if g:hexowiki_use_imaps == 1
+if g:hugowiki_use_imaps == 1
     inoremap <buffer><unique> <expr> ： col('.') == 1 ? ': ' : '：'
     inoremap <buffer><unique> <expr> :  col('.') == 1 ? ': ' : ':'
     inoremap <buffer><unique> <expr> 》 col('.') == 1 ? '> ' : '》'
@@ -43,7 +43,7 @@ if g:hexowiki_use_imaps == 1
 endif
 
 "-------------------------------------\ R Markdown /------------------------------------
-if &filetype == 'rmd' && g:hexowiki_rmd_auto_trans.enable
+if &filetype == 'rmd' && g:hugowiki_rmd_auto_trans.enable
     au BufWritePost <buffer> lua require'hexormd'.rmd_writepost()
 endif
 
