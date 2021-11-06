@@ -16,10 +16,6 @@ let g:hugowiki_try_init_file = get(g:, 'hugowiki_try_init_file', 0)
 let g:hugowiki_follow_after_create = get(g:, 'hugowiki_follow_after_create', 0)
 let g:hugowiki_use_imaps = get(g:, 'hugowiki_use_imaps', 1)
 let g:hugowiki_disable_fold = get(g:, 'hugowiki_disable_fold', 0)
-let g:hugowiki_header_items = get(g:, 'hugowiki_header_items', [
-    \ 'title', 'comments', 'mathjax', 'date',
-    \ 'tags', 'categories', 'coauthor'
-    \ ])
 let g:hugowiki_wrap = get(g:, 'hugowiki_wrap', 1)
 let g:hugowiki_auto_save = get(g:, 'hugowiki_auto_save', 1)
 
@@ -34,7 +30,6 @@ function! s:is_ascii(pos)
 endfunction
 
 " get the number of bytes of a character according to its first byte
-" get the number of bytes of a character according to its first byte
 function! s:wcharlen(charfb)
     let cmasks = [0x80, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe]
     let cvals  = [0x00, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc]
@@ -46,6 +41,13 @@ function! s:wcharlen(charfb)
     endfor
 endfunction
 
+" Get inline visual selection.
+"
+" Return:
+"   - a list descripting selection
+"       0: String, selection string
+"       1: int, begin position
+"       2: int, end porition
 function! s:visualInline()
     let line = getline('.')
 
@@ -65,7 +67,7 @@ function! s:visualInline()
     return [getline('.')[vbegin:vend], vbegin, vend]
 endfunction
 
-" Create a new link under the cursor
+" Create a new link under the cursor.
 "
 " Return:
 "   - Empty string if failed.
@@ -79,17 +81,18 @@ function! s:createLink(mode)
         return ''
     endif
 
-    if a:mode == 'v' || a:mode == 'V'
-        " Visual mode
+    if a:mode == 'v' || a:mode == 'V'   " Visual mode
         let visual_selection = s:visualInline()
         let base = visual_selection[0]
         echo visual_selection
         if visual_selection[1] == 0
-            let newline = '<a href="{% post_path ' . substitute(visual_selection[0], '\s', '-', 'g') . ' %}">' .
-                        \ visual_selection[0] . '</a>' . line[visual_selection[2]+1 :]
+            let newline = '[' . visual_selection[0] . ']({{< relref "'
+                        \ . visual_selection[0] . '" >}})'
+                        \ . line[visual_selection[2]+1 :]
         else
-            let newline = line[: visual_selection[1]-1] . '<a href="{% post_path ' . substitute(visual_selection[0], '\s', '-', 'g') . ' %}">' .
-                        \ visual_selection[0] . '</a>' . line[visual_selection[2]+1 :]
+            let newline = line[: visual_selection[1]-1] . '[' . visual_selection[0]
+                        \ . ']({{< relref "' . visual_selection[0] . '" >}})'
+                        \ . line[visual_selection[2]+1 :]
         endif
     else
         let matchp = match(line, '\S')
@@ -104,34 +107,59 @@ function! s:createLink(mode)
 
         let base = line[matchp : matchn - 1]
         if matchp == 0
-            let newline = '<a href="{% post_path ' . base . ' %}">' . base. '</a>' . line[matchn :]
+            let newline = '[' . base . ']({{< relref "' . base. '" >}})' . line[matchn :]
         else
-            let newline = line[: matchp-1] . '<a href="{% post_path ' . base . ' %}">' . base. '</a>' . line[matchn :]
+            let newline = line[: matchp-1] . '[' . base . ']({{< relref "' . base. '" >}})' . line[matchn :]
         endif
     endif
 
     call setline(line('.'), newline)
-    return base != '' ? base . '.md' : ''
+    " return base != '' ? base . '.md' : ''
 endfunction
 
-function! s:init_file() abort
-    " if file doesn't exist and file is in right dir
+function! s:createFile() abort
+    " if file doesn't exist and cwd is the right dir
     if glob(expand('%:p')) == '' && expand('%:p:h') == expand(g:hugowiki_home)
-        " TODO: detect page type
-        let l:type = 'post'
-
-        echo 'hugo new ' . l:type . ' "' . expand('%:t:r') . '" ...'
-        call system('hugo new ' . l:type . ' "' . expand('%:t:r') . '"')
+        echo 'hugo new "' . expand('%:t:r') . '" ...'
+        call system('hugo new "' . expand('%:t:r') . '"')
         edit
     endif
 endfunction
 
+function! s:getFile(s)
+    let file_path = ''  " return var
+    if a:s[0] == '/'
+        let file_path = g:hugowiki_home . a:s[1:]
+    else
+        let file_path = expand("%:p:h") . '/' . a:s[1:]
+    endif
+    if glob(file_path . '.md') != ''
+        let file_path = glob(file_path . '.md')
+    elseif glob(file_path . '/index.md') != ''
+        let file_path =  glob(file_path . '/index.md')
+    elseif glob(file_path . '/_index.md') != ''
+        let file_path =  glob(file_path . '/_index.md')
+    else
+        let file_path = ''
+    endif
+    return file_path
+endfunction
+
+function! s:jumpToAnchor(a, flags)
+    if a:a == ''
+        return
+    endif
+    let anc = tolower(substitute(a:a[1:], '-', '[ -]', 'g'))
+    if !search('^#\+\s\+' . anc . '\|^#\+\s\+.*{.*[\w''"]\@<!alias=[''"]' . anc . '[''"].*}$', a:flags)
+        echo 'Anchor ' . anc . ' not found.'
+    endif
+endfunction
+
+
 let s:link_patterns = [
-    \ '{%\s*post_link\s\+.\{-1,}%}',
-    \ '<a\s\+href=[''"]{%\s\+post_path\s\+\(.\{-1,}\)\s*%}\(?highlight=.\{-}\)\=\(#.\{-}\)\=[''"]>.\{-}<\/a>',
-    \ '\[.\{-1,}\](\(?highlight=.\{-}\)*\(#.\{-1,}\))',
-    \ '!\?\[.\{-1,}\](\(.\{-1,}\))',
-    \ '\[\(\^.\{-}\)\]\(:\=\)'
+    \ '\\\@<!\[.\{-}\\\@<!\]({{<\s*\(rel\)\?ref\s\+"\([^#]\{-}\)\(#.\{-}\)\?"\s\+>}}\\\@<!)',
+    \ '\\\@<!\[.\{-}\\\@<!\](\(#.\{-}\)\\\@<!)',
+    \ '\\\@<!\[.\{-}\\\@<!\](\(.\{-}\)\\\@<!)'
     \ ]
 
 " Create or follow ori_link link
@@ -143,14 +171,7 @@ function! s:followLink() abort
     let matchb = 0
     let matche = 0
     " If cursor is on a link, get the beginning, end and type of the link.
-    for link_type in range(5)
-        " let matchb = match(line, s:link_patterns[link_type])
-        " " No link in this line
-        " if matchb == -1
-        "     continue
-        " endif
-        " let matche = matchend(line, s:link_patterns[link_type])
-        "
+    for link_type in range(len(s:link_patterns))
         " When the cursor is not on current link, try to find next link.
         while (col < matchb || col >= matche) && matchb != -1
             let matchb = match(line, s:link_patterns[link_type], matche)
@@ -160,7 +181,6 @@ function! s:followLink() abort
             endif
             let matche = matchend(line, s:link_patterns[link_type], matchb)
         endwhile
-
 
         if matchb != -1
             " Found
@@ -183,40 +203,21 @@ function! s:followLink() abort
         if new_file != '' && g:hugowiki_follow_after_create
             execute 'edit ' . new_file
         endif
-    " Jump somewhere according to `link_type`
-    elseif link_type == 0
-        " Go to the the file specified by the link.
-        let match_list = matchlist(line[matchb : matche-1], '{%\s*post_link\s\+\([^\u0020\u0009]\+\).\{-1,}%}')
-        execute 'edit ' . g:hugowiki_home . match_list[1] . '.md'
-        if g:hugowiki_try_init_file == 1
-            call s:init_file()
-        endif
-    elseif link_type == 1
+    else    " follow link
         let m = matchlist(line[matchb:matche-1], s:link_patterns[link_type])
-        execute 'edit ' . m[1] . '.md'
-        if g:hugowiki_try_init_file == 1
-            call s:init_file()
-        endif
-        if m[3] != '#' && m[3][0] == '#'
-            call search('#\+\s\+' . tolower(substitute(m[3][1:], '-', '[ -]', 'g')) . '$')
-        endif
-    elseif link_type == 2
-        let m = matchlist(line[matchb:matche-1], s:link_patterns[link_type])
-        " echo tolower(substitute(m[2][1:], '-', ' ', 'g'))
-        if !search('#\+\s\+' . tolower(substitute(m[2][1:], '-', '[ -]', 'g')) . '$', 's')
-            if !search('{%\stabs\s' . tolower(substitute(m[2][1:], '-', '[ -]', 'g')) . ',\d\s%}', 's')
-                echo 'Anchor ' . m[2][1:] . ' not found.'
+        if link_type == 0
+            let file_path = s:getFile(m[2])
+            if file_path != ''
+                execute 'edit ' . file_path
+            else
+                echo 'File not exists.'
             endif
-        endif
-    elseif link_type == 3
-        let m = matchlist(line[matchb:matche-1], s:link_patterns[link_type])
-        call system('xdg-open ' . m[1])
-    elseif link_type == 4
-        let m = matchlist(line[matchb:matche-1], s:link_patterns[link_type])
-        if m[2] == ''
-            call search('^\[' . m[1] . '\]:\s', 's')
-        else
-            call search('\[' . m[1] . '\]\($\|[^:]\)', 'sb')
+            call s:jumpToAnchor(m[3], '')
+        elseif link_type == 1
+            call s:jumpToAnchor(m[1], 's')
+        elseif link_type == 2
+            call system('xdg-open ' . m[1])
+            echo 'xdg-open ' . m[1]
         endif
     endif
 
@@ -256,14 +257,14 @@ function! g:hugowiki#foldexpr(lnum)
     " endif
 
     " hugo tag
-    if syn_name == 'HWTagDelimiter'
-        let name_pattern = '\('.join(g:hugowiki_multiline_tags_with_end, '\|').'\)'
-        if getline(a:lnum) =~# '^{%\s\+' . name_pattern . '.*%}'
-            return 'a1'
-        elseif getline(a:lnum) =~# '^{%\s\+end' . name_pattern . '\s\+%}'
-            return 's1'
-        end
-    endif
+    " if syn_name == 'HWTagDelimiter'
+    "     let name_pattern = '\('.join(g:hugowiki_multiline_tags_with_end, '\|').'\)'
+    "     if getline(a:lnum) =~# '^{%\s\+' . name_pattern . '.*%}'
+    "         return 'a1'
+    "     elseif getline(a:lnum) =~# '^{%\s\+end' . name_pattern . '\s\+%}'
+    "         return 's1'
+    "     end
+    " endif
 
     " Code Block
     if syn_name =~# 'HWCodeDelimiterStart.*'
@@ -356,7 +357,6 @@ if g:hugowiki_auto_save
     augroup autosave
         au!
         au InsertLeave *.md,*.markdown,*.Rmd silent update
-        au TextChanged *.md,*.markdown,*.Rmd silent update
     augroup END
 endif
 

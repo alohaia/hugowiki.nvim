@@ -43,7 +43,7 @@ if g:hugowiki_use_imaps == 1
 endif
 
 "-------------------------------------\ R Markdown /------------------------------------
-if &filetype == 'rmd' && g:hugowiki_rmd_auto_trans.enable
+if &filetype == 'rmd' && g:hugowiki_rmd_auto_convert.enable
     au BufWritePost <buffer> lua require'hexormd'.rmd_writepost()
 endif
 

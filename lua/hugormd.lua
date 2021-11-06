@@ -1,9 +1,5 @@
 local M = {}
-local configs = vim.g.hugowiki_rmd_auto_trans
-
-if not configs.enable then
-    return M
-end
+local configs = vim.g.hugowiki_rmd_auto_convert
 
 M.rmd_writepost = function()
     local stdin = vim.loop.new_pipe(false)
