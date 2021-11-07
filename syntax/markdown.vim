@@ -15,10 +15,11 @@ hi SpellBad gui=undercurl
 
 "======================================\ Special /======================================
 
-syn include @HWIncludeCode_yaml syntax/yaml.vim
-syn region HWHeader contains=@HWIncludeCode_yaml keepend
-    \ start='\%^---$' end='^---$'
+syn include @CHWIncludeCode_yaml syntax/yaml.vim
+syn region HWHeader contains=@CHWIncludeCode_yaml keepend
+    \ matchgroup=HWHeaderDelimiter start='\%^---$' end='^---$'
 hi link HWHeader Define
+hi link HWHeaderDelimiter yamlDocumentStart
 
 syn match HWLine '^-----*$'
 hi link HWLine Comment
@@ -56,10 +57,10 @@ hi link HWString String
 hi link HWBracket Special
 
 "---------------------------------\ Inline Code & Math /--------------------------------
-syn include @HWIncludeCode_tex syntax/tex.vim
+syn include @CHWIncludeCode_tex syntax/tex.vim
 syn region HWInlineCode matchgroup=HWCodeDelimiter keepend oneline start="\\\@<!`" end="`"
 syn region HWInlineMath matchgroup=HWDelimiter oneline start='\\\@<!\$' end='\$' skip="\\\$"
-    \ contains=@HWIncludeCode_tex
+    \ contains=@CHWIncludeCode_tex
 
 syn cluster CHWInlineCM contains=HWInlineCode,HWInlineMath
 
@@ -67,22 +68,13 @@ hi link HWCodeDelimiter PreProc
 hi link HWInlineCode String
 hi link HWInlineMath PreProc
 
-"-------------------------------------\ Foot Note /-------------------------------------
-syn region HWFootnote matchgroup=HWDelimiter keepend oneline
-    \ start='\\\@<!\[\ze\^' end='\]\ze\([^:]\|\n\)' skip='\\]'
-syn region HWFootnoteDefination matchgroup=HWDelimiter keepend oneline
-    \ start='^\\\@<!\[\ze\^' end='\]\ze:\s' skip='\\]:\s'
-
-hi link HWFootnote           htmlLink
-hi link HWFootnoteDefination htmlLink
-
 "------------------------------------\ Link & Image /-----------------------------------
-syn match HWRawLink '\(https\?\|ftp\)://[^ ]\+' contains=@NoSpell
+syn match HWRawLink '\(https\?\|ftp\)://[^ ]\+' keepend contains=@NoSpell
 syn match _HWRawLinkId +#.\++ contained
 syn match _HWRawLinkRel +/.\++ contained
-syn match HWLink +\[.\{-1,}\](.\{-1,})+ contains=HWLinkText,HWLinkTarget
-syn match HWLinkText +\[\zs.\{-1,}\ze\]+ contains=@CHWInline
-syn match HWLinkTarget +(\zs.\{-1,}\ze)+ contains=HWRawLink,_HWRawLinkId,_HWRawLinkRel,HWHugoTagRef
+syn match HWLink +\[.\{-1,}\](.\{-1,})+ keepend contains=HWLinkText,HWLinkTarget
+syn match HWLinkText +\[\zs.\{-1,}\ze\]+ keepend contains=@CHWInline
+syn match HWLinkTarget +(\zs.\{-1,}\ze)+ keepend contains=HWRawLink,_HWRawLinkId,_HWRawLinkRel,HWHugoTagRef
 
 syn cluster CHWLink contains=HWLink,HWRawLink
 
@@ -92,18 +84,27 @@ hi link HWRawLink   htmlLink
 hi link HWLinkText  htmlLink
 hi link HWHtmlLink  htmlLink
 
+"-------------------------------------\ Foot Note /-------------------------------------
+syn region HWFootnote matchgroup=HWDelimiter keepend oneline
+    \ start='\\\@<!\[\ze\^' end='\]:\@<!' skip='\\]'
+syn region HWFootnoteDefination matchgroup=HWDelimiter keepend oneline
+    \ start='^\\\@<!\[\ze\^' end='\]:\s' skip='\\]:\s'
+
+hi link HWFootnote           htmlLink
+hi link HWFootnoteDefination htmlLink
+
 "--------------------------------------\ Hugo Tag /-------------------------------------
-syn region HWHugoTag matchgroup=HWDelimiter contains=@NoSpell oneline
+syn region HWHugoTag matchgroup=HWDelimiter contains=@NoSpell keepend oneline
     \ start='{{<\s*/\?' end='\s*>}}'
-syn region HWHugoTag matchgroup=HWDelimiter contains=@NoSpell oneline
+syn region HWHugoTag matchgroup=HWDelimiter contains=@NoSpell keepend oneline
     \ start='{{%\s*/\?' end='\s*%}}'
-syn region HWHugoTagRef matchgroup=HWDelimiter contains=@NoSpell oneline
+syn region HWHugoTagRef matchgroup=HWDelimiter contains=@NoSpell keepend oneline
     \ start=+{{<\s*\(rel\)\?ref\s\+"+ end=+"\s*>}}+
 
 syn match HWHugoTagItem +\w\+=.*+ contained
     \ contains=HWHugoTagItemName,HWHugoTagItemValue containedin=HWHugoTag,HWHugoTagRef
 syn match HWHugoTagItemName +\w*\ze=\&+ contained
-syn match HWHugoTagItemValue +"\zs[^=]*\ze"+ contains=@CHWInline contained
+syn match HWHugoTagItemValue +"\zs[^=]*\ze"+ contains=@CHWInline contained keepend
 syn match HWHugoTagItemValue +\d\++ contained
 syn keyword HWHugoTagItemValue true false contained
 
@@ -128,19 +129,19 @@ hi link HWComment Comment
 syn region HWInsert oneline keepend
     \ start='\\\@<!<ins>' end='\\\@<!</ins>'
     \ contains=@CHWInline,HWHtmlTag
-syn region HWDelete matchgroup=HWDeleteDelimiter oneline keepend concealends
+syn region HWDelete matchgroup=HWDelimiter oneline keepend
     \ start='[^~]\{-}\zs\~\~' end='\~\~\ze[^~]\{-}' skip='\\\~\~'
     \ contains=@CHWInline
-syn region HWItalic matchgroup=HWItalicDelimiter oneline keepend concealends
+syn region HWItalic matchgroup=HWDelimiter oneline keepend
     \ start='\\\@<!\*' end='\*' skip='\\\*'
     \ contains=@CHWInline
-syn region HWBold matchgroup=HWBoldDelimiter oneline keepend concealends
+syn region HWBold matchgroup=HWDelimiter oneline keepend
     \ start='\\\@<!\*\*' end='\*\*' skip='\\\*\*'
     \ contains=@CHWInline
-syn region HWItalicBold matchgroup=HWItalicBoldDelimiter oneline keepend concealends
+syn region HWItalicBold matchgroup=HWDelimiter oneline keepend
     \ start='\\\@<!\*\*\*' end='\*\*\*' skip='\\\*\*\*'
     \ contains=@CHWInline
-syn region HWHighlight matchgroup=HWHighlightDelimiter oneline keepend concealends
+syn region HWHighlight matchgroup=HWDelimiter oneline keepend
     \ start='\\\@<!<mark>' end='\\\@<!</mark>'
     \ contains=@CHWInline
 
@@ -211,7 +212,9 @@ hi link HWReferenceHead Comment
 "===================================\ Multiple Line /===================================
 
 "-------------------------------------\ Code Block /------------------------------------
-syn region HWCodeBlock matchgroup=HWCodeDelimiter start="^\s*````*.*$" end="^\s*````*\ze\s*$" keepend
+syn region HWCodeBlock keepend contains=@NoSpell
+    \ matchgroup=HWCodeDelimiterStart start="^\s*````*.*$"
+    \ matchgroup=HWCodeDelimiterEnd end="^\s*````*\ze\s*$"
 
 let g:markdown_fenced_languages = get(g:, 'markdown_fenced_languages', [])
 let s:done_include = {}
@@ -219,17 +222,18 @@ for s:type in map(copy(g:markdown_fenced_languages),'matchstr(v:val,"[^=]*$")')
   if has_key(s:done_include, matchstr(s:type,'[^.]*'))
     continue
   endif
-  exe 'syn include @HWIncludeCode_'.substitute(s:type,'\.','','g').' syntax/'.matchstr(s:type,'[^.]*').'.vim'
+  exe 'syn include @CHWIncludeCode_'.substitute(s:type,'\.','','g').' syntax/'.matchstr(s:type,'[^.]*').'.vim'
   exe 'syn region HWCodeBlock_'.substitute(s:type,'\.','','g')
-              \ .' matchgroup=HWCodeDelimiterStart start=/^```'.s:type.'[ \n]/ matchgroup=HWCodeDelimiterStart end=/^```$/'
-              \ .' contains=@HWIncludeCode_'.substitute(s:type,'\.','','g').' keepend'
+              \ .' matchgroup=HWCodeDelimiterStart start=/^```'.s:type.'[ \n]/ matchgroup=HWCodeDelimiterEnd end=/^```$/'
+              \ .' contains=@NoSpell,@CHWIncludeCode_'.substitute(s:type,'\.','','g').' keepend'
   unlet! b:current_syntax
   let s:done_include[matchstr(s:type,'[^.]*')] = 1
 endfor
 unlet! s:type
 unlet! s:done_include
 
-hi link HWCodeBlock PreProc
+hi link HWCodeDelimiterStart String
+hi link HWCodeDelimiterEnd   String
 
 "-------------------------------------\ Math Block /------------------------------------
 syn region HWMathBlock contains=@HWIncludeCode_tex keepend display

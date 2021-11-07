@@ -150,7 +150,9 @@ function! s:jumpToAnchor(a, flags)
         return
     endif
     let anc = tolower(substitute(a:a[1:], '-', '[ -]', 'g'))
-    if !search('^#\+\s\+' . anc . '\|^#\+\s\+.*{.*[\w''"]\@<!alias=[''"]' . anc . '[''"].*}$', a:flags)
+    if !search('^#\+\s\+' . anc . '\(\s*{.*}\)\?$'
+        \ . '\|^#\+\s\+.*{.*[\w''"]\@<!\(alias\|id\)=[''"]' . anc . '[''"].*}$'
+        \ . '\|^#\+\s\+.*{.*#' . anc . '.*}$', a:flags)
         echo 'Anchor ' . anc . ' not found.'
     endif
 endfunction
@@ -159,7 +161,8 @@ endfunction
 let s:link_patterns = [
     \ '\\\@<!\[.\{-}\\\@<!\]({{<\s*\(rel\)\?ref\s\+"\([^#]\{-}\)\(#.\{-}\)\?"\s\+>}}\\\@<!)',
     \ '\\\@<!\[.\{-}\\\@<!\](\(#.\{-}\)\\\@<!)',
-    \ '\\\@<!\[.\{-}\\\@<!\](\(.\{-}\)\\\@<!)'
+    \ '\\\@<!\[.\{-}\\\@<!\](\(.\{-}\)\\\@<!)',
+    \ '\\\@<!\[\(\^.\{-}\)\\\@<!\]\(:\=\)'
     \ ]
 
 " Create or follow ori_link link
@@ -218,6 +221,12 @@ function! s:followLink() abort
         elseif link_type == 2
             call system('xdg-open ' . m[1])
             echo 'xdg-open ' . m[1]
+        elseif link_type == 3
+            if m[2] == ''
+                call search('^\[' . m[1] . '\\\@<!\]:\s', 's')
+            else
+                call search('\\\@<!\[' . m[1] . '\\\@<!\]:\@<!', 'sb')
+            endif
         endif
     endif
 
@@ -275,7 +284,7 @@ function! g:hugowiki#foldexpr(lnum)
     endif
 
     " Header
-    if syn_name == 'HWHeader'
+    if syn_name == 'HWHeaderDelimiter'
         if a:lnum == 1
             return 'a1'
         else
