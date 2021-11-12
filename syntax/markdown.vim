@@ -116,7 +116,7 @@ hi link HWHugoTagItemName htmlArg
 
 "--------------------------------------\ Html Tag /-------------------------------------
 syn match HWHtmlTag contains=HWHtmlTagDelimiter +\\\@<!</\?.\{-}\\\@<!>+
-syn match HWHtmlTagDelimiter contained +<\|>+
+syn match HWHtmlTagDelimiter contained +</\?\|/\?>+
 syn match HWComment '<!--.*-->'
 
 syn cluster CHWHtmlTag contains=HWHtmlTag,HWComment
@@ -174,9 +174,11 @@ syn region HWHeadingAttr matchgroup=HWDelimiter start=+{+ end=+}+ keepend onelin
     \ contains=HWHeadingAttrClass,HWHeadingAttrId,HWHeadingAttrItem
 syn match HWHeadingAttrClass +\.\S\++ contained
 syn match HWHeadingAttrId +#\S\++ contained
-syn match HWHeadingAttrItem +\S\+="\S\{-}"+ contained contains=HWHeadingAttrItemName,HWHeadingAttrItemValue
-syn match HWHeadingAttrItemName +[^\t =]*\ze=+ contained
-syn match HWHeadingAttrItemValue +"\zs[^\t =]*"+ contained
+syn match HWHeadingAttrItem +\w\+="[^"]\{-}"+ contained contains=HWHeadingAttrItemName,HWHeadingAttrItemValue
+syn match HWHeadingAttrItem +\w\+='[^']\{-}'+ contained contains=HWHeadingAttrItemName,HWHeadingAttrItemValue
+syn match HWHeadingAttrItemName +\w*\ze=+ contained
+syn match HWHeadingAttrItemValue +"[^"]*"+ contained
+syn match HWHeadingAttrItemValue +'[^']*'+ contained
 
 syn cluster CHWHeading contains=HWHeading1,HWHeading2,HWHeading3,HWHeading4,HWHeading5,HWHeading6
 

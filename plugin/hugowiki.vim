@@ -146,23 +146,24 @@ function! s:getFile(s)
 endfunction
 
 function! s:jumpToAnchor(a, flags)
-    if a:a == ''
-        return
-    endif
     let anc = tolower(substitute(a:a[1:], '-', '[ -]', 'g'))
     if !search('^#\+\s\+' . anc . '\(\s*{.*}\)\?$'
-        \ . '\|^#\+\s\+.*{.*[\w''"]\@<!\(alias\|id\)=[''"]' . anc . '[''"].*}$'
+        \ . '\|^#\+\s\+.*{.*\<\(alias\|id\)="[^"]*\<' . anc . '\>[^"]*".*}$'
+        \ . '\|^#\+\s\+.*{.*\<\(alias\|id\)=''[^'']*\<' . anc . '\>[^'']*''.*}$'
         \ . '\|^#\+\s\+.*{.*#' . anc . '.*}$', a:flags)
-        echo 'Anchor ' . anc . ' not found.'
+        return v:false
+    else
+        call search(anc)
+        return v:true
     endif
 endfunction
 
 
 let s:link_patterns = [
+    \ '\\\@<!\[\(\^.\{-}\)\\\@<!\]\(:\=\)(\@<!',
     \ '\\\@<!\[.\{-}\\\@<!\]({{<\s*\(rel\)\?ref\s\+"\([^#]\{-}\)\(#.\{-}\)\?"\s\+>}}\\\@<!)',
     \ '\\\@<!\[.\{-}\\\@<!\](\(#.\{-}\)\\\@<!)',
-    \ '\\\@<!\[.\{-}\\\@<!\](\(.\{-}\)\\\@<!)',
-    \ '\\\@<!\[\(\^.\{-}\)\\\@<!\]\(:\=\)'
+    \ '\\\@<!\[.\{-}\\\@<!\](\(.\{-}\)\\\@<!)'
     \ ]
 
 " Create or follow ori_link link
@@ -209,24 +210,28 @@ function! s:followLink() abort
     else    " follow link
         let m = matchlist(line[matchb:matche-1], s:link_patterns[link_type])
         if link_type == 0
-            let file_path = s:getFile(m[2])
-            if file_path != ''
-                execute 'edit ' . file_path
-            else
-                echo 'File not exists.'
-            endif
-            call s:jumpToAnchor(m[3], '')
-        elseif link_type == 1
-            call s:jumpToAnchor(m[1], 's')
-        elseif link_type == 2
-            call system('xdg-open ' . m[1])
-            echo 'xdg-open ' . m[1]
-        elseif link_type == 3
             if m[2] == ''
                 call search('^\[' . m[1] . '\\\@<!\]:\s', 's')
             else
                 call search('\\\@<!\[' . m[1] . '\\\@<!\]:\@<!', 'sb')
             endif
+        elseif link_type == 1
+            let file_path = s:getFile(m[2])
+            if file_path != ''
+                execute 'edit ' . file_path
+                if m[3] != ''
+                    if !s:jumpToAnchor(m[3], '')
+                        echo 'Anchor ' . m[3] . ' not found.'
+                    end
+                end
+            else
+                echo 'File not exists.'
+            endif
+        elseif link_type == 2
+            call s:jumpToAnchor(m[1], 's')
+        elseif link_type == 3
+            call system('xdg-open ' . m[1])
+            echo 'xdg-open ' . m[1]
         endif
     endif
 

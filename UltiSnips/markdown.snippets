@@ -25,11 +25,11 @@ snippet "(\# )?h([1-6])" "Headings" rbA
 `!p snip.rv = '#' * int(match.group(2))` ${1:${VISUAL}}
 endsnippet
 
-snippet icd "inline code" iwA
+snippet icd "inline code" iw
 \`${1:${VISUAL}}\`
 endsnippet
 
-snippet mcd "Code block" bA
+snippet mcd "Code block" bw
 \`\`\`${1:xxx}${2: ${3:title} ${4:url} ${5:link_text}}
 ${6:${VISUAL}}
 \`\`\`
@@ -64,12 +64,12 @@ snippet del "deleted line" iw
 ~~${1:${VISUAL}}~~
 endsnippet
 
-snippet sub "subscript" iwA
-${1}<sub>${2:${VISUAL}}</sub>
+snippet sub "subscript" i
+<sub>${1:${VISUAL}}</sub>
 endsnippet
 
-snippet sup "subscript" iwA
-${1}<sup>${2:${VISUAL}}</sup>
+snippet sup "subscript" i
+<sup>${1:${VISUAL}}</sup>
 endsnippet
 
 snippet hl "highlight" i
@@ -80,9 +80,9 @@ snippet anc "anchor" i
 [${1:${VISUAL}}](#${2:`!p snip.rv=anchor_format(t[1])`})
 endsnippet
 
-snippet '^\*' "Abbr" rA
-*[${1:abbr}]: ${2:description}
-endsnippet
+# snippet '^\*' "Abbr" rA
+# *[${1:abbr}]: ${2:description}
+# endsnippet
 
 ############# Hugo Shortcodes #############
 snippet tag "primary tag" iw
@@ -101,21 +101,21 @@ snippet fig "hugo figure shortcode" iw
 {{< figure src="${1}.${2:png}" title="${3:$1}" caption="${4}" alt="$3" class="${5}" >}}
 endsnippet
 
-snippet tab "tab" iwA
+snippet tab "tab" iw
 {{% tab type="${1:default}" summary="${2}" details=false open=true `!p snip.rv = ('id="tab_' + t[2] + '" ') if t[2] else ""`%}}
 ${3:${VISUAL}}
 {{% /tab %}}
 endsnippet
 
-snippet hzl "horizontal list" iwA
+snippet hzl "horizontal list" iw
 {{% hzl %}}${1:${VISUAL}}{{% /hzl %}}
 endsnippet
 
-snippet hdt "hidden text" iwA
+snippet hdt "hidden text" iw
 {{% hdt "${1:${VISUAL}}" %}}
 endsnippet
 
-snippet tbl "table with title and caption" bwA
+snippet tbl "table with title and caption" bw
 {{% table title="${1}" caption="${2}" left_sticky=${3:false} %}}
 ${0:${VISUAL}}
 {{% /table %}}
@@ -126,7 +126,7 @@ snippet sa "see also" iw
 endsnippet
 
 ############## Special Snippets #############
-snippet more "more" bwA
+snippet more "more" bw
 <!--more-->
 endsnippet
 
@@ -135,6 +135,6 @@ snippet br "<br/> tag" iw
 endsnippet
 
 
-snippet per "Percentage Range" i
+snippet per "Percentage Range" iw
 ${1}%\~${2}%$0
 endsnippet
