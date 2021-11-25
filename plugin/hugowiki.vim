@@ -6,7 +6,7 @@ if exists('g:loaded_hugowiki') || &compatible
 endif
 let g:loaded_hugowiki = 1
 
-"---------------------------------------\ config /---------------------------------------
+" prepare configs
 let g:hugowiki_home = get(g:, 'hugowiki_home')
 let g:hugowiki_home =
     \ strgetchar(g:hugowiki_home, strlen(g:hugowiki_home)) == '/'
@@ -19,7 +19,6 @@ let g:hugowiki_disable_fold = get(g:, 'hugowiki_disable_fold', 0)
 let g:hugowiki_wrap = get(g:, 'hugowiki_wrap', 1)
 let g:hugowiki_auto_save = get(g:, 'hugowiki_auto_save', 1)
 
-"---------------------------------\ initialize a file /----------------------------------
 function! s:is_ascii(pos)
     let line = getline('.')
     if and(char2nr(line[col(a:pos)-1]), 0x80) == 0
@@ -71,7 +70,7 @@ endfunction
 "
 " Return:
 "   - Empty string if failed.
-"   - Name of new file if Succeed.
+"   - Name of new file (should be used by s:getFile) if Succeed.
 function! s:createLink(mode)
     let line = getline('.')
     let col = col('.') - 1
@@ -114,7 +113,7 @@ function! s:createLink(mode)
     endif
 
     call setline(line('.'), newline)
-    " return base != '' ? base . '.md' : ''
+    return base
 endfunction
 
 function! s:createFile() abort
@@ -126,24 +125,27 @@ function! s:createFile() abort
     endif
 endfunction
 
+
+const s:subfixes = ['.md', '/index.md', '/_index.md']
+
 function! s:getFile(s)
     let file_path = ''  " return var
     if a:s[0] == '/'
         let file_path = g:hugowiki_home . a:s[1:]
     else
-        let file_path = expand("%:p:h") . '/' . a:s[1:]
+        let file_path = expand("%:p:h") . '/' . a:s
     endif
-    if glob(file_path . '.md') != ''
-        let file_path = glob(file_path . '.md')
-    elseif glob(file_path . '/index.md') != ''
-        let file_path =  glob(file_path . '/index.md')
-    elseif glob(file_path . '/_index.md') != ''
-        let file_path =  glob(file_path . '/_index.md')
-    else
-        let file_path = ''
-    endif
+
+    for subfix in s:subfixes
+        let full_path = glob(file_path . subfix)
+        if full_path != ''
+            let file_path = full_path
+        endif
+    endfor
+
     return file_path
 endfunction
+
 
 function! s:jumpToAnchor(a, flags)
     let anc = tolower(substitute(a:a[1:], '-', '[ -]', 'g'))
@@ -159,8 +161,8 @@ function! s:jumpToAnchor(a, flags)
 endfunction
 
 
-let s:link_patterns = [
-    \ '\\\@<!\[\(\^.\{-}\)\\\@<!\]\(:\=\)(\@<!',
+const s:link_patterns = [
+    \ '\\\@<!\[\(\^.\{-}\)\\\@<!\]:\@<!',
     \ '\\\@<!\[.\{-}\\\@<!\]({{<\s*\(rel\)\?ref\s\+"\([^#]\{-}\)\(#.\{-}\)\?"\s\+>}}\\\@<!)',
     \ '\\\@<!\[.\{-}\\\@<!\](\(#.\{-}\)\\\@<!)',
     \ '\\\@<!\[.\{-}\\\@<!\](\(.\{-}\)\\\@<!)'
@@ -204,17 +206,17 @@ function! s:followLink() abort
     if matchb == 0 && matche == 0
         " Create a link under cursor
         let new_file = s:createLink(mode())
-        if new_file != '' && g:hugowiki_follow_after_create
-            execute 'edit ' . new_file
+        if g:hugowiki_follow_after_create
+            if s:getFile(new_file) != ''
+                execute 'edit ' . expand("%:p:h") . '/' . new_file . ".md"
+            elseif new_file != ''
+                execute 'edit ' . new_file
+            endif
         endif
     else    " follow link
         let m = matchlist(line[matchb:matche-1], s:link_patterns[link_type])
         if link_type == 0
-            if m[2] == ''
-                call search('^\[' . m[1] . '\\\@<!\]:\s', 's')
-            else
-                call search('\\\@<!\[' . m[1] . '\\\@<!\]:\@<!', 'sb')
-            endif
+            call search('^\[' . m[1] . '\\\@<!\]:\s', 's')
         elseif link_type == 1
             let file_path = s:getFile(m[2])
             if file_path != ''
@@ -241,7 +243,6 @@ function! s:findLink(foreward)
     call searchpos(join(s:link_patterns, '\|'), a:foreward ? 'sb' : 's')
 endfunction
 
-"--------------------------------------\ folding /--------------------------------------
 function! g:hugowiki#foldexpr(lnum)
     let syn_name = synIDattr(synID(a:lnum, match(getline(a:lnum), '\S') + 1, 1), "name")
     let syn_name_eol = synIDattr(synID(a:lnum, match(getline(a:lnum), '\S\s*$')+1, 1), "name")
@@ -322,7 +323,6 @@ function! g:hugowiki#foldtext() abort
     return head
 endfunction
 
-"------------------------------------\ Shift titles /-----------------------------------
 function! s:shiftTitles(inc)
     let line = getline('.')
     if line !~ '^#\+\s\+.*$'
@@ -349,7 +349,6 @@ function! s:shiftTitles(inc)
     call cursor(curpos[1], curpos[2])
 endfunction
 
-"--------------------------------------\ mappings /-------------------------------------
 noremap <unique><script> <Plug>FollowLinkN <SID>FollowLinkN
 noremap <unique><script> <Plug>FollowLinkV <SID>FollowLinkV
 noremap <unique><script> <Plug>FindLinkP <SID>FindLinkP
@@ -366,7 +365,6 @@ noremap <unique><script> <Plug>ShiftTitlesDec <SID>ShiftTitlesDec
 noremap <unique> <SID>ShiftTitlesInc <Cmd>call <SID>shiftTitles(1)<CR>
 noremap <unique> <SID>ShiftTitlesDec <Cmd>call <SID>shiftTitles(0)<CR>
 
-"--------------------------------------\ autocmd /--------------------------------------
 if g:hugowiki_auto_save
     augroup autosave
         au!
@@ -388,6 +386,7 @@ function! g:Conv()
     %s/hzl \(\S\) %}}/hzl "\1" %}}/g
     %s/\^\(.\{-}\)\^/<sup>\1<\/sup>/g
     %s/\(\\\|\~\)\@<!\~\([^~ ]\{1,}\)\~\~\@!/<sub>\2<\/sub>/g
+    %s/\(\s*- .*\)：$/\1/g
     " sub ?
 endfunction
 

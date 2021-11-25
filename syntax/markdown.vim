@@ -40,21 +40,18 @@ syn match HWHtmlBr '<br/\?>' conceal cchar=⤶      " ⤶↩↵
 syn cluster CHWInlineSpecial contains=HWKeyword,HWEscape,HWEmoji,HWHtmlBr
 
 hi link HWKeyword Keyword
-hi link HWEscape PreProc
+hi link HWEscape Comment
 hi link HWEmoji Special
 hi link HWHtmlBr Comment
 
 "--------------------------------------\ Enclosed /-------------------------------------
-syn match HWString contains=@CHWInline +\\\@<!".\{-}"+ keepend
-syn match HWString contains=@CHWInline +\\\@<!'.\{-}'+ keepend
-syn match HWString contains=@CHWInline +\\\@<!“.\{-}”+ keepend
-syn match HWString contains=@CHWInline +\\\@<!‘.\{-}’+ keepend
-syn match HWBracket +\\\@<![()[\]{}（）「」【】〔〕［］『』〖〗｛｝]+
-
+syn match HWString contains=@CHWInline +\\\@<!".\{-}"+ contains=TOP
+syn match HWString contains=@CHWInline +\\\@<!'.\{-}'+ contains=TOP
+syn match HWString contains=@CHWInline +\\\@<!“.\{-}”+ contains=TOP
+syn match HWString contains=@CHWInline +\\\@<!‘.\{-}’+ contains=TOP
 syn cluster CHWEnclosed contains=HWString,HWBracket
 
 hi link HWString String
-hi link HWBracket Special
 
 "---------------------------------\ Inline Code & Math /--------------------------------
 syn include @CHWIncludeCode_tex syntax/tex.vim
@@ -72,9 +69,9 @@ hi link HWInlineMath PreProc
 syn match HWRawLink '\(https\?\|ftp\)://[^ ]\+' keepend contains=@NoSpell
 syn match _HWRawLinkId +#.\++ contained
 syn match _HWRawLinkRel +/.\++ contained
-syn match HWLink +\[.\{-1,}\](.\{-1,})+ keepend contains=HWLinkText,HWLinkTarget
-syn match HWLinkText +\[\zs.\{-1,}\ze\]+ keepend contains=@CHWInline
-syn match HWLinkTarget +(\zs.\{-1,}\ze)+ keepend contains=HWRawLink,_HWRawLinkId,_HWRawLinkRel,HWHugoTagRef
+syn match HWLink +\[[^[]\{-1,}\](.\{-1,})+ keepend contains=HWLinkText,HWLinkTarget
+syn match HWLinkText +\[\zs.\{-1,}\ze\]+ keepend contained contains=@CHWInline
+syn match HWLinkTarget +(\zs.\{-1,}\ze)+ keepend contained contains=HWRawLink,_HWRawLinkId,_HWRawLinkRel,HWHugoTagRef
 
 syn cluster CHWLink contains=HWLink,HWRawLink
 
@@ -126,23 +123,23 @@ hi link HWHtmlTagDelimiter HWDelimiter
 hi link HWComment Comment
 
 "----------------------------------\ Text declaration /---------------------------------
-syn region HWInsert oneline keepend
-    \ start='\\\@<!<ins>' end='\\\@<!</ins>'
-    \ contains=@CHWInline,HWHtmlTag
-syn region HWDelete matchgroup=HWDelimiter oneline keepend
-    \ start='[^~]\{-}\zs\~\~' end='\~\~\ze[^~]\{-}' skip='\\\~\~'
+syn region HWInsert matchgroup=HWDelimiter oneline keepend
+    \ start=+\\\@<!<ins>+ end=+</ins>+ skip=+\\</ins>+
     \ contains=@CHWInline
-syn region HWItalic matchgroup=HWDelimiter oneline keepend
-    \ start='\\\@<!\*' end='\*' skip='\\\*'
+syn region HWDelete matchgroup=HWDelimiter oneline
+    \ start=+[^~]\{-}\zs\~\~+ end=+\~\~\ze[^~]\{-}+ skip=+\\\~\~+
     \ contains=@CHWInline
-syn region HWBold matchgroup=HWDelimiter oneline keepend
-    \ start='\\\@<!\*\*' end='\*\*' skip='\\\*\*'
+syn region HWItalic matchgroup=HWDelimiter oneline
+    \ start=+\\\@<!\*+ end=+\*+ skip='\\\*'
     \ contains=@CHWInline
-syn region HWItalicBold matchgroup=HWDelimiter oneline keepend
-    \ start='\\\@<!\*\*\*' end='\*\*\*' skip='\\\*\*\*'
+syn region HWBold matchgroup=HWDelimiter oneline
+    \ start=+\\\@<!\*\*+ end=+\*\*+ skip=+\\\*\*+
     \ contains=@CHWInline
-syn region HWHighlight matchgroup=HWDelimiter oneline keepend
-    \ start='\\\@<!<mark>' end='\\\@<!</mark>'
+syn region HWItalicBold matchgroup=HWDelimiter oneline
+    \ start=+\\\@<!\*\*\*+ end=+\*\*\*+ skip=+\\\*\*\*+
+    \ contains=@CHWInline
+syn region HWHighlight matchgroup=HWDelimiter oneline
+    \ start=+\\\@<!<mark>+ end=+\\\@<!</mark>+
     \ contains=@CHWInline
 
 syn cluster CHWTextDeclaration
@@ -262,7 +259,6 @@ syn region HWDefineContent matchgroup=HWDelimiter contained keepend
 
 hi HWDefineHead cterm=bold gui=bold
 hi link HWDefineContent Comment
-
 
 
 let b:current_syntax = 'markdown'
