@@ -126,17 +126,17 @@ hi link HWComment Comment
 syn region HWInsert matchgroup=HWDelimiter oneline keepend
     \ start=+\\\@<!<ins>+ end=+</ins>+ skip=+\\</ins>+
     \ contains=@CHWInline
-syn region HWDelete matchgroup=HWDelimiter oneline
-    \ start=+[^~]\{-}\zs\~\~+ end=+\~\~\ze[^~]\{-}+ skip=+\\\~\~+
+syn region HWDelete matchgroup=HWDelimiter oneline keepend
+    \ start=+[^~]\{-}\zs\~\~+ end=+\~\~\ze[^~]\{-}+ skip=+\\\~\\\~+
     \ contains=@CHWInline
-syn region HWItalic matchgroup=HWDelimiter oneline
+syn region HWItalic matchgroup=HWDelimiter oneline keepend
     \ start=+\\\@<!\*+ end=+\*+ skip='\\\*'
     \ contains=@CHWInline
-syn region HWBold matchgroup=HWDelimiter oneline
-    \ start=+\\\@<!\*\*+ end=+\*\*+ skip=+\\\*\*+
+syn region HWBold matchgroup=HWDelimiter oneline keepend
+    \ start=+\\\@<!\*\*+ end=+\*\*+ skip=+\\\*\\\*+
     \ contains=@CHWInline
 syn region HWItalicBold matchgroup=HWDelimiter oneline
-    \ start=+\\\@<!\*\*\*+ end=+\*\*\*+ skip=+\\\*\*\*+
+    \ start=+\\\@<!\*\*\*+ end=+\*\*\*+ skip=+\\\*\\\*\*+
     \ contains=@CHWInline
 syn region HWHighlight matchgroup=HWDelimiter oneline
     \ start=+\\\@<!<mark>+ end=+\\\@<!</mark>+

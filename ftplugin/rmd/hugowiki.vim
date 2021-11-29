@@ -35,18 +35,9 @@ if !hasmapto('<Plug>ShiftTitlesDec')
     nmap <nowait> <buffer> <leader><< <Plug>ShiftTitlesDec
 endif
 
-if g:hugowiki_use_imaps == 1
-    inoremap <buffer><unique> <expr> ：col('.') == 1 ? ': ' : '：'
-    inoremap <buffer><unique> <expr> : col('.') == 1 ? ': ' : ': '
-    inoremap <buffer><unique> <expr> 》col('.') == 1 ? '> ' : '》'
-    inoremap <buffer><unique> <expr> > match(getline('.')[0:col('.')-1], '[^ >]') == -1 ? '> ' : '\>'
-    inoremap <buffer><unique> ~ \~
-    inoremap <buffer><unique> * \*
-    inoremap <buffer><unique> < \<
-endif
-
 if g:hugowiki_auto_update_lastmod == 1
-    au BufWrite <buffer> call g:hugowiki#UpdateModTime()
+    " au BufWritePost <buffer> undojoin | call g:hugowiki#UpdateModTime() | nnoremap u u<Cmd>keepjumps normal g;<CR><Cmd>nunmap u<CR>
+    au BufWritePost <buffer> call g:hugowiki#UpdateModTime()
 endif
 
 if g:hugowiki_auto_save
@@ -55,3 +46,8 @@ if g:hugowiki_auto_save
         au InsertLeave <buffer> silent update
     augroup END
 endif
+
+if g:hugowiki_rmd_auto_convert.enable
+    au BufWritePost <buffer> lua require'hexormd'.rmd_writepost()
+endif
+
