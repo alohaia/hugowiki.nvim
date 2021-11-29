@@ -354,8 +354,9 @@ endfunction
 function! g:hugowiki#UpdateModTime()
     let now = system('date +%Y-%m-%dT%T%:z')[0:-2]
     let header_end = searchpos('\n\zs---', 'n')
-    let date_pos = searchpos('date: ', 'n')[0]
+    let date_pos = searchpos('^date: ', 'n')[0]
     let pos = searchpos('^lastmod:', 'n')
+    let save_cursor = getpos(".")
 
     if date_pos[0] > header_end[0]
         date_pos[0] = header_end[0] - 1
@@ -373,6 +374,8 @@ function! g:hugowiki#UpdateModTime()
             call append(header_end[0]-1, 'lastmod: ' . now)
         endif
     endif
+
+    call setpos('.', save_cursor)
 endfunction
 
 noremap <unique> <SID>FollowLinkN <cmd>call <SID>followLink()<CR>
