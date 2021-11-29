@@ -37,7 +37,7 @@ endif
 
 if g:hugowiki_use_imaps == 1
     inoremap <buffer><unique> <expr> ：col('.') == 1 ? ': ' : '：'
-    inoremap <buffer><unique> <expr> : col('.') == 1 ? ': ' : ': '
+    inoremap <buffer><unique> <expr> : col('.') == 1 ? ': ' : ':'
     inoremap <buffer><unique> <expr> 》col('.') == 1 ? '> ' : '》'
     inoremap <buffer><unique> <expr> > match(getline('.')[0:col('.')-1], '[^ >]') == -1 ? '> ' : '\>'
     inoremap <buffer><unique> ~ \~
