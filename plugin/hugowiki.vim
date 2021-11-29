@@ -18,6 +18,8 @@ let g:hugowiki_use_imaps = get(g:, 'hugowiki_use_imaps', 1)
 let g:hugowiki_disable_fold = get(g:, 'hugowiki_disable_fold', 0)
 let g:hugowiki_wrap = get(g:, 'hugowiki_wrap', 1)
 let g:hugowiki_auto_save = get(g:, 'hugowiki_auto_save', 1)
+let g:hugowiki_auto_update_lastmod = get(g:, "hugowiki_auto_update_lastmod", 1)
+let g:hugowiki_lastmod_under_date = get(g:, "hugowiki_auto_update_lastmod", 1)
 
 function! s:is_ascii(pos)
     let line = getline('.')
@@ -349,30 +351,47 @@ function! s:shiftTitles(inc)
     call cursor(curpos[1], curpos[2])
 endfunction
 
-noremap <unique><script> <Plug>FollowLinkN <SID>FollowLinkN
-noremap <unique><script> <Plug>FollowLinkV <SID>FollowLinkV
-noremap <unique><script> <Plug>FindLinkP <SID>FindLinkP
-noremap <unique><script> <Plug>FindLinkN <SID>FindLinkN
+function! g:hugowiki#UpdateModTime()
+    let now = system('date +%Y-%m-%dT%T%:z')[0:-2]
+    let header_end = searchpos('\n\zs---', 'n')
+    let date_pos = searchpos('date: ', 'n')[0]
+    let pos = searchpos('^lastmod:', 'n')
+
+    if date_pos[0] > header_end[0]
+        date_pos[0] = header_end[0] - 1
+    endif
+
+    if pos[0] != 0 && pos[0] < header_end[0] " already have lastmod setted
+        call setline(pos[0], 'lastmod: ' . now)
+        if g:hugowiki_lastmod_under_date == 1 && pos[0] != date_pos[0]+1
+            execute pos[0] . 'move ' . date_pos[0]
+        endif
+    else
+        if g:hugowiki_lastmod_under_date == 1
+            call append(date_pos, 'lastmod: ' . now)
+        else
+            call append(header_end[0]-1, 'lastmod: ' . now)
+        endif
+    endif
+endfunction
 
 noremap <unique> <SID>FollowLinkN <cmd>call <SID>followLink()<CR>
 noremap <unique> <SID>FollowLinkV <ESC>gv<cmd>call <SID>followLink()<CR><ESC>
 noremap <unique> <SID>FindLinkP <cmd>call <SID>findLink(1)<CR>
 noremap <unique> <SID>FindLinkN <cmd>call <SID>findLink(0)<CR>
 
-noremap <unique><script> <Plug>ShiftTitlesInc <SID>ShiftTitlesInc
-noremap <unique><script> <Plug>ShiftTitlesDec <SID>ShiftTitlesDec
+noremap <unique><script> <Plug>FollowLinkN <SID>FollowLinkN
+noremap <unique><script> <Plug>FollowLinkV <SID>FollowLinkV
+noremap <unique><script> <Plug>FindLinkP <SID>FindLinkP
+noremap <unique><script> <Plug>FindLinkN <SID>FindLinkN
 
 noremap <unique> <SID>ShiftTitlesInc <Cmd>call <SID>shiftTitles(1)<CR>
 noremap <unique> <SID>ShiftTitlesDec <Cmd>call <SID>shiftTitles(0)<CR>
 
-if g:hugowiki_auto_save
-    augroup autosave
-        au!
-        au InsertLeave *.md,*.markdown,*.Rmd silent update
-    augroup END
-endif
+noremap <unique><script> <Plug>ShiftTitlesDec <SID>ShiftTitlesDec
+noremap <unique><script> <Plug>ShiftTitlesInc <SID>ShiftTitlesInc
 
-function! g:Conv()
+function! g:hugowiki#Conv()
     %s/{\@<!{%/{{%/g
     %s/%}}\@!/%}}/g
     %s/++\(.\{-}\)++/<ins>\1<\/ins>/g

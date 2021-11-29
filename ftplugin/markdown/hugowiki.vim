@@ -36,14 +36,22 @@ if !hasmapto('<Plug>ShiftTitlesDec')
 endif
 
 if g:hugowiki_use_imaps == 1
-    inoremap <buffer><unique> <expr> ： col('.') == 1 ? ': ' : '：'
-    inoremap <buffer><unique> <expr> :  col('.') == 1 ? ': ' : ':'
-    inoremap <buffer><unique> <expr> 》 col('.') == 1 ? '> ' : '》'
-    inoremap <buffer><unique> <expr> >  col('.') == 1 ? '> ' : '>'
+    inoremap <buffer><unique> <expr> ：col('.') == 1 ? ': ' : '：'
+    inoremap <buffer><unique> <expr> : col('.') == 1 ? ': ' : ': '
+    inoremap <buffer><unique> <expr> 》col('.') == 1 ? '> ' : '》'
+    inoremap <buffer><unique> <expr> > match(getline('.')[0:col('.')-1], '[^ >]') == -1 ? '> ' : '\>'
+    inoremap <buffer><unique> ~ \~
+    inoremap <buffer><unique> * \*
+    inoremap <buffer><unique> < \<
 endif
 
-"-------------------------------------\ R Markdown /------------------------------------
-if &filetype == 'rmd' && g:hugowiki_rmd_auto_convert.enable
-    au BufWritePost <buffer> lua require'hexormd'.rmd_writepost()
+if g:hugowiki_auto_update_lastmod == 1
+    au BufWrite <buffer> call g:hugowiki#UpdateModTime()
 endif
 
+if g:hugowiki_auto_save
+    augroup autosave
+        au!
+        au InsertLeave <buffer> silent update
+    augroup END
+endif
