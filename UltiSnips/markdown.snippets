@@ -37,7 +37,7 @@ endsnippet
 
 snippet MM "Math block" bwA
 \$\$${1:${VISUAL}}
-.\$\$
+\\\\,.\$\$
 endsnippet
 
 snippet mm "Inline math" iw
@@ -98,7 +98,7 @@ snippet rrf "hugo relref shortcode" iw
 endsnippet
 
 snippet fig "hugo figure shortcode" iw
-{{< figure src="${1}.${2:png}" title="${3:$1}" caption="${4}" alt="$3" class="${5}" >}}
+{{< figure src="${1}.${2:png}" title="${3:$1}" caption="${4}" alt="$3" class="${5}" `!p snip.rv = ('id="fig_' + t[1] + '" ') if t[1] else ""`>}}
 endsnippet
 
 snippet tab "tab" iw
@@ -116,7 +116,7 @@ snippet hdt "hidden text" iw
 endsnippet
 
 snippet tbl "table with title and caption" bw
-{{% table title="${1}" caption="${2}" left_sticky=${3:false} %}}
+{{% table title="${1}" caption="${2}" left_sticky=${3:false} `!p snip.rv = ('id="tbl_' + t[1] + '" ') if t[1] else ""` %}}
 ${0:${VISUAL}}
 {{% /table %}}
 endsnippet
