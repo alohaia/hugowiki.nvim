@@ -35,9 +35,8 @@ if !hasmapto('<Plug>ShiftTitlesDec')
     nmap <nowait> <buffer> <leader><< <Plug>ShiftTitlesDec
 endif
 
-if g:hugowiki_auto_update_lastmod == 1
-    " au BufWritePost <buffer> undojoin | call g:hugowiki#UpdateModTime() | nnoremap u u<Cmd>keepjumps normal g;<CR><Cmd>nunmap u<CR>
-    au BufWritePost <buffer> call g:hugowiki#UpdateModTime()
+if g:hugowiki_auto_update_lastmod == 1 && g:hugowiki#at_home() == 1
+    au BufWrite <buffer> call g:hugowiki#UpdateModTime()
 endif
 
 if g:hugowiki_auto_save

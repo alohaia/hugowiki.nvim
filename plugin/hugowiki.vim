@@ -9,7 +9,7 @@ let g:loaded_hugowiki = 1
 " prepare configs
 let g:hugowiki_home = get(g:, 'hugowiki_home')
 let g:hugowiki_home =
-    \ strgetchar(g:hugowiki_home, strlen(g:hugowiki_home)) == '/'
+    \ strgetchar(g:hugowiki_home, strlen(g:hugowiki_home)-1) == 47
     \ ? g:hugowiki_home[:-2] : g:hugowiki_home
 
 let g:hugowiki_try_init_file = get(g:, 'hugowiki_try_init_file', 0)
@@ -20,6 +20,10 @@ let g:hugowiki_wrap = get(g:, 'hugowiki_wrap', 1)
 let g:hugowiki_auto_save = get(g:, 'hugowiki_auto_save', 1)
 let g:hugowiki_auto_update_lastmod = get(g:, "hugowiki_auto_update_lastmod", 1)
 let g:hugowiki_lastmod_under_date = get(g:, "hugowiki_auto_update_lastmod", 1)
+
+function! g:hugowiki#at_home()
+    return match(expand("%:p:h").'/', expand(g:hugowiki_home).'/') == 0
+endfunction
 
 function! s:is_ascii(pos)
     let line = getline('.')
