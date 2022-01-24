@@ -1,4 +1,4 @@
-" Vim plugin for writing hexo posts
+" Vim plugin for writing hugo posts
 " Maintainer: Qihuan Liu <liu.qihuan@outlook.com>
 
 if exists('b:current_syntax')

@@ -413,6 +413,7 @@ function! g:hugowiki#Conv()
     %s/\^\(.\{-}\)\^/<sup>\1<\/sup>/g
     %s/\(\\\|\~\)\@<!\~\([^~ ]\{1,}\)\~\~\@!/<sub>\2<\/sub>/g
     %s/\(\s*- .*\)：$/\1/g
+    %s/date: \(\S\+\) \(\S\+\)/date: \1T\2+08:00
     " sub ?
 endfunction
 

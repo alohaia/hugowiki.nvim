@@ -1,7 +1,14 @@
 local M = {}
-local configs = vim.g.hugowiki_rmd_auto_convert
+M.hugowiki_rmd_knitting = false
+local configs = vim.g.hugowiki_rmd_auto_knit
 
 M.rmd_writepost = function()
+    if M.hugowiki_rmd_knitting then
+        print("A knitting job is running.")
+        return
+    end
+    M.hugowiki_rmd_knitting = true
+
     local stdin = vim.loop.new_pipe(false)
     local stdout = vim.loop.new_pipe(false)
     local stderr = vim.loop.new_pipe(false)
@@ -17,8 +24,9 @@ M.rmd_writepost = function()
     end)
 
     local r_handle
+    local filename = vim.fn.expand("%:p")
     r_handle = vim.loop.spawn('Rscript', {
-            args = {configs.r_script},
+            args = {configs.r_script, filename, string.gsub(filename, "%.Rmd$", ".md")},
             stdio = {stdin, stdout, stderr},
             cwd = configs.cwd
         },
@@ -30,6 +38,7 @@ M.rmd_writepost = function()
             if code ~= 0 or signal ~= 0 then
                 print('exit with', code, signal)
             end
+            M.hugowiki_rmd_knitting = false
         end)
     )
 

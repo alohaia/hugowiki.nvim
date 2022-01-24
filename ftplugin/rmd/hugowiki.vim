@@ -46,7 +46,7 @@ if g:hugowiki_auto_save
     augroup END
 endif
 
-if g:hugowiki_rmd_auto_convert.enable
-    au BufWritePost <buffer> lua require'hexormd'.rmd_writepost()
+if g:hugowiki_rmd_auto_knit.enable
+    au BufWritePost <buffer> lua require'hugormd'.rmd_writepost()
 endif
 
