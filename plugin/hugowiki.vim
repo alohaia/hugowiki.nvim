@@ -132,24 +132,29 @@ function! s:createFile() abort
 endfunction
 
 
-const s:subfixes = ['.md', '/index.md', '/_index.md']
+const s:subfixes = ['.Rmd', '.md', '/index.md', '/_index.md']
 
 function! s:getFile(s)
-    let file_path = ''  " return var
-    if a:s[0] == '/'
-        let file_path = g:hugowiki_home . a:s[1:]
+    let file_path = ""
+    if a:s[0] == "/"
+        let file_path = g:hugowiki_home . "/content" . a:s
     else
-        let file_path = expand("%:p:h") . '/' . a:s
+        let file_path = expand("%:p:h") . "/" . a:s
     endif
 
-    for subfix in s:subfixes
-        let full_path = glob(file_path . subfix)
-        if full_path != ''
-            let file_path = full_path
-        endif
-    endfor
+    if match(file_path, "\\(" . join(s:subfixes, "$\\|") . "\\)") != -1
+        return file_path
+    else
+        for subfix in s:subfixes
+            let full_path = glob(file_path . subfix)
+            if full_path != ""
+                let file_path = full_path
+                return full_path
+            endif
+        endfor
+    endif
 
-    return file_path
+    return ""
 endfunction
 
 
@@ -214,7 +219,7 @@ function! s:followLink() abort
         let new_file = s:createLink(mode())
         if g:hugowiki_follow_after_create
             if s:getFile(new_file) != ''
-                execute 'edit ' . expand("%:p:h") . '/' . new_file . ".md"
+                execute 'edit ' . expand("%:p:h") . '/' . s:getFile(new_file)
             elseif new_file != ''
                 execute 'edit ' . new_file
             endif
