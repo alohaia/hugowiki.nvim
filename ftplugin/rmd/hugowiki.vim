@@ -49,4 +49,3 @@ endif
 if g:hugowiki_rmd_auto_knit.enable
     au BufWritePost <buffer> lua require'hugormd'.rmd_writepost()
 endif
-

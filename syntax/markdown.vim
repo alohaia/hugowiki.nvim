@@ -98,10 +98,10 @@ syn region HWHugoTag matchgroup=HWDelimiter contains=@NoSpell keepend oneline
 syn region HWHugoTagRef matchgroup=HWDelimiter contains=@NoSpell keepend oneline
     \ start=+{{<\s*\(rel\)\?ref\s\+"+ end=+"\s*>}}+
 
-syn match HWHugoTagItem +\w\+=.*+ contained
+syn match HWHugoTagItem +\w\+=\([^ ='"]\{1,}\|".\{-}"\)+ contained
     \ contains=HWHugoTagItemName,HWHugoTagItemValue containedin=HWHugoTag,HWHugoTagRef
 syn match HWHugoTagItemName +\w*\ze=\&+ contained
-syn match HWHugoTagItemValue +"\zs[^=]*\ze"+ contains=@CHWInline contained keepend
+syn match HWHugoTagItemValue +"\zs[^=]*\ze"+ contains=@CHWInline contained
 syn match HWHugoTagItemValue +\d\++ contained
 syn keyword HWHugoTagItemValue true false contained
 

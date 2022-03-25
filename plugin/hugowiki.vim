@@ -387,21 +387,33 @@ function! g:hugowiki#UpdateModTime()
     call setpos('.', save_cursor)
 endfunction
 
-noremap <unique> <SID>FollowLinkN <cmd>call <SID>followLink()<CR>
-noremap <unique> <SID>FollowLinkV <ESC>gv<cmd>call <SID>followLink()<CR><ESC>
-noremap <unique> <SID>FindLinkP <cmd>call <SID>findLink(1)<CR>
-noremap <unique> <SID>FindLinkN <cmd>call <SID>findLink(0)<CR>
+function! s:newDiary()
+    let relpath = 'content/diary/' . strftime('%Y/%m/%d') . '/index.md'
+    call system(['hugo -s', g:hugowiki_home, 'new', relpath]->join(' '))
+    if glob(expand([g:hugowiki_home, relpath]->join('/'))) == ''
+        echo 'content/diary/' . strftime('%Y/%m/%d') . '/index.md created.'
+    else
+        echo 'content/diary/' . strftime('%Y/%m/%d') . '/index.md already exists.'
+    endif
+    exec 'edit' g:hugowiki_home .. '/' .. relpath
+endfunction
 
-noremap <unique><script> <Plug>FollowLinkN <SID>FollowLinkN
-noremap <unique><script> <Plug>FollowLinkV <SID>FollowLinkV
-noremap <unique><script> <Plug>FindLinkP <SID>FindLinkP
-noremap <unique><script> <Plug>FindLinkN <SID>FindLinkN
 
+noremap <unique> <SID>FollowLinkN <Cmd>call <SID>followLink()<CR>
+noremap <unique> <SID>FollowLinkV <ESC>gv<Cmd>call <SID>followLink()<CR><ESC>
+noremap <unique> <SID>FindLinkP <Cmd>call <SID>findLink(1)<CR>
+noremap <unique> <SID>FindLinkN <Cmd>call <SID>findLink(0)<CR>
 noremap <unique> <SID>ShiftTitlesInc <Cmd>call <SID>shiftTitles(1)<CR>
 noremap <unique> <SID>ShiftTitlesDec <Cmd>call <SID>shiftTitles(0)<CR>
 
-noremap <unique><script> <Plug>ShiftTitlesDec <SID>ShiftTitlesDec
-noremap <unique><script> <Plug>ShiftTitlesInc <SID>ShiftTitlesInc
+noremap <unique><script> <Plug>HWFollowLinkN <SID>FollowLinkN
+noremap <unique><script> <Plug>HWFollowLinkV <SID>FollowLinkV
+noremap <unique><script> <Plug>HWFindLinkP <SID>FindLinkP
+noremap <unique><script> <Plug>HWFindLinkN <SID>FindLinkN
+noremap <unique><script> <Plug>HWShiftTitlesDec <SID>ShiftTitlesDec
+noremap <unique><script> <Plug>HWShiftTitlesInc <SID>ShiftTitlesInc
+
+command HWNewDiary call <SID>newDiary()
 
 function! g:hugowiki#Conv()
     %s/{\@<!{%/{{%/g
