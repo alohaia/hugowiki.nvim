@@ -389,8 +389,8 @@ endfunction
 
 function! s:newDiary()
     let relpath = 'content/diary/' . strftime('%Y/%m/%d') . '/index.md'
-    call system(['hugo -s', g:hugowiki_home, 'new', relpath]->join(' '))
     if glob(expand([g:hugowiki_home, relpath]->join('/'))) == ''
+        call system(['hugo -s', g:hugowiki_home, 'new', relpath]->join(' '))
         echo 'content/diary/' . strftime('%Y/%m/%d') . '/index.md created.'
     else
         echo 'content/diary/' . strftime('%Y/%m/%d') . '/index.md already exists.'
