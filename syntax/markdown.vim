@@ -77,9 +77,10 @@ syn cluster CHWLink contains=HWLink,HWRawLink
 
 syn match HWImage +!\[.\{-}\](.\{-1,})+ contains=HWLinkText,HWLinkTarget
 
-hi link HWRawLink   htmlLink
-hi link HWLinkText  htmlLink
-hi link HWHtmlLink  htmlLink
+hi _HWLink cterm=underline gui=underline guifg=#48aff0
+hi link HWRawLink   _HWLink
+hi link HWLinkText  _HWLink
+hi link HWHtmlLink  _HWLink
 
 "-------------------------------------\ Foot Note /-------------------------------------
 syn region HWFootnote matchgroup=HWDelimiter keepend oneline
@@ -87,8 +88,8 @@ syn region HWFootnote matchgroup=HWDelimiter keepend oneline
 syn region HWFootnoteDefination matchgroup=HWDelimiter keepend oneline
     \ start='^\\\@<!\[\ze\^' end='\]:\s' skip='\\]:\s'
 
-hi link HWFootnote           htmlLink
-hi link HWFootnoteDefination htmlLink
+hi link HWFootnote           _HWLink
+hi link HWFootnoteDefination _HWLink
 
 "--------------------------------------\ Hugo Tag /-------------------------------------
 syn region HWHugoTag matchgroup=HWDelimiter contains=@NoSpell keepend oneline
@@ -194,10 +195,10 @@ hi link HWH4Delimiter HWDelimiter
 hi link HWH5Delimiter HWDelimiter
 hi link HWH6Delimiter HWDelimiter
 
-hi link HWHeadingAttrClass cssClassName
-hi link HWHeadingAttrId cssIdentifier
+hi link HWHeadingAttrClass Identifier
+hi link HWHeadingAttrId Identifier
 hi link HWHeadingAttrItemValue String
-hi link HWHeadingAttrItemName htmlArg
+hi link HWHeadingAttrItemName Identifier
 
 "-------------------------------------\ Reference /-------------------------------------
 syn region HWReference oneline
@@ -244,8 +245,10 @@ hi link HWMathBlock PreProc
 
 "---------------------------------------\ lists /---------------------------------------
 syn match HWListMarker '^\s*\zs\(\d\+\.\|\d\+)\|-\|\*\|+\)\ze\s\+'
+syn match HWCheckListMarker '^\s*\zs\(\(-\|\*\|+\) \)\?\[[ X]\]\ze\s\+'
 
-hi link HWListMarker htmlTagName
+hi link HWListMarker Label
+hi link HWCheckListMarker Label
 
 "---------------------------------------\ Define /--------------------------------------
 syn match HWDefine transparent +^[^:~\t ].*\n\(\s*[:~]\s\+.*\n\)\++
