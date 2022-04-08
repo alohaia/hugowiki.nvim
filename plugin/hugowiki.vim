@@ -82,14 +82,14 @@ function! s:createLink(mode)
     let col = col('.') - 1
 
     if char2nr(line[col]) == 32 || char2nr(line[col]) == 9 || char2nr(line[col]) == 0
-        " echo 'Not on any valid text, cannot create a link here.'
+        " echo '[hugowiki.vim] Not on any valid text, cannot create a link here.'
         return ''
     endif
 
     if a:mode == 'v' || a:mode == 'V'   " Visual mode
         let visual_selection = s:visualInline()
         let base = visual_selection[0]
-        echo visual_selection
+        " echo visual_selection
         if visual_selection[1] == 0
             let newline = '[' . visual_selection[0] . ']({{< relref "'
                         \ . visual_selection[0] . '" >}})'
@@ -125,7 +125,7 @@ endfunction
 function! s:createFile() abort
     " if file doesn't exist and cwd is the right dir
     if glob(expand('%:p')) == '' && expand('%:p:h') == expand(g:hugowiki_home)
-        echo 'hugo new "' . expand('%:t:r') . '" ...'
+        echo '[hugowiki.vim] hugo new "' . expand('%:t:r') . '" ...'
         call system('hugo new "' . expand('%:t:r') . '"')
         edit
     endif
@@ -138,8 +138,17 @@ function! s:getFile(s)
     let file_path = ""
     if a:s[0] == "/"
         let file_path = g:hugowiki_home . "/content" . a:s
-    else
+    elseif match(file_path, "/") != -1
         let file_path = expand("%:p:h") . "/" . a:s
+    else
+        " ".*/病原生物学"
+        let file_list = system('find ' . g:hugowiki_home . '/content -regex ".*/' . a:s . '\(/_?index.md\|.md\)"')
+        let file_list = split(file_list, "\n")
+        if len(file_list) != 1
+            return ""
+        else
+            return file_list[0]
+        endif
     endif
 
     if match(file_path, "\\(" . join(s:subfixes, "$\\|") . "\\)") != -1
@@ -201,17 +210,17 @@ function! s:followLink() abort
 
         if matchb != -1
             " Found
-            " echo 'Fonud: ' . line[matchb : matche-1]
+            " echo '[hugowiki.vim] Fonud: ' . line[matchb : matche-1]
             break
         else
             " Not Found
-            " echo 'not link type ' . link_type . ': ' matchb
+            " echo '[hugowiki.vim] not link type ' . link_type . ': ' matchb
             let matchb = 0
             let matche = 0
         endif
     endfor
 
-    " echo 'link type: ' . link_type . "\n" . 'matchb: ' . matchb
+    " echo '[hugowiki.vim] link type: ' . link_type . "\n" . 'matchb: ' . matchb
 
     " No link in current line
     if matchb == 0 && matche == 0
@@ -234,17 +243,17 @@ function! s:followLink() abort
                 execute 'edit ' . file_path
                 if m[3] != ''
                     if !s:jumpToAnchor(m[3], '')
-                        echo 'Anchor ' . m[3] . ' not found.'
+                        echo '[hugowiki.vim] Anchor ' . m[3] . ' not found.'
                     end
                 end
             else
-                echo 'File not exists.'
+                echo '[hugowiki.vim] File not exists or multiple files match.'
             endif
         elseif link_type == 2
             call s:jumpToAnchor(m[1], 's')
         elseif link_type == 3
             call system('xdg-open ' . m[1])
-            echo 'xdg-open ' . m[1]
+            echo '[hugowiki.vim] xdg-open ' . m[1]
         endif
     endif
 
@@ -391,9 +400,9 @@ function! s:newDiary()
     let relpath = 'content/diary/' . strftime('%Y/%m/%d') . '/index.md'
     if glob(expand([g:hugowiki_home, relpath]->join('/'))) == ''
         call system(['hugo -s', g:hugowiki_home, 'new', relpath]->join(' '))
-        echo 'content/diary/' . strftime('%Y/%m/%d') . '/index.md created.'
+        echo '[hugowiki.vim] content/diary/' . strftime('%Y/%m/%d') . '/index.md created.'
     else
-        echo 'content/diary/' . strftime('%Y/%m/%d') . '/index.md already exists.'
+        echo '[hugowiki.vim] content/diary/' . strftime('%Y/%m/%d') . '/index.md already exists.'
     endif
     exec 'edit' g:hugowiki_home .. '/' .. relpath
 endfunction
