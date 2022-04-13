@@ -182,10 +182,10 @@ endfunction
 
 
 const s:link_patterns = [
-    \ '\\\@<!\[\(\^.\{-}\)\\\@<!\]:\@<!',
-    \ '\\\@<!\[.\{-}\\\@<!\]({{<\s*\(rel\)\?ref\s\+"\([^#]\{-}\)\(#.\{-}\)\?"\s\+>}}\\\@<!)',
-    \ '\\\@<!\[.\{-}\\\@<!\](\(#.\{-}\)\\\@<!)',
-    \ '\\\@<!\[.\{-}\\\@<!\](\(.\{-}\)\\\@<!)'
+    \ '\\\@<!\[\(\^.\{-}\)\\\@<!\]:\@!',
+    \ '\(^- \)\@<!\\\@<!\[.\{-}\\\@<!\]({{<\s*\(rel\)\?ref\s\+"\([^#]\{-}\)\(#.\{-}\)\?"\s\+>}}\\\@<!)',
+    \ '\(^- \)\@<!\\\@<!\[.\{-}\\\@<!\](#\(.\{-}\)\\\@<!)',
+    \ '\(^- \)\@<!\\\@<!\[.\{-}\\\@<!\](\(.\{-}\)\\\@<!)'
     \ ]
 
 " Create or follow ori_link link
@@ -238,22 +238,22 @@ function! s:followLink() abort
         if link_type == 0
             call search('^\[' . m[1] . '\\\@<!\]:\s', 's')
         elseif link_type == 1
-            let file_path = s:getFile(m[2])
+            let file_path = s:getFile(m[3])
             if file_path != ''
                 execute 'edit ' . file_path
-                if m[3] != ''
-                    if !s:jumpToAnchor(m[3], '')
-                        echo '[hugowiki.vim] Anchor ' . m[3] . ' not found.'
+                if m[4] != ''
+                    if !s:jumpToAnchor(m[4], '')
+                        echo '[hugowiki.vim] Anchor ' . m[4] . ' not found.'
                     end
                 end
             else
                 echo '[hugowiki.vim] File not exists or multiple files match.'
             endif
         elseif link_type == 2
-            call s:jumpToAnchor(m[1], 's')
+            call s:jumpToAnchor(m[2], 's')
         elseif link_type == 3
-            call system('xdg-open ' . m[1])
-            echo '[hugowiki.vim] xdg-open ' . m[1]
+            call system('xdg-open ' . m[2])
+            echo '[hugowiki.vim] xdg-open ' . m[2]
         endif
     endif
 

@@ -84,7 +84,7 @@ hi link HWHtmlLink  _HWLink
 
 "-------------------------------------\ Foot Note /-------------------------------------
 syn region HWFootnote matchgroup=HWDelimiter keepend oneline
-    \ start='\\\@<!\[\ze\^' end='\]:\@<!' skip='\\]'
+    \ start='\S\zs\\\@<!\[\ze\^' end='\]:\@<!' skip='\\]'
 syn region HWFootnoteDefination matchgroup=HWDelimiter keepend oneline
     \ start='^\\\@<!\[\ze\^' end='\]:\s' skip='\\]:\s'
 
