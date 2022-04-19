@@ -183,9 +183,9 @@ endfunction
 
 const s:link_patterns = [
     \ '\\\@<!\[\(\^.\{-}\)\\\@<!\]:\@!',
-    \ '\(^- \)\@<!\\\@<!\[.\{-}\\\@<!\]({{<\s*\(rel\)\?ref\s\+"\([^#]\{-}\)\(#.\{-}\)\?"\s\+>}}\\\@<!)',
-    \ '\(^- \)\@<!\\\@<!\[.\{-}\\\@<!\](#\(.\{-}\)\\\@<!)',
-    \ '\(^- \)\@<!\\\@<!\[.\{-}\\\@<!\](\(.\{-}\)\\\@<!)'
+    \ '\\\@<!\[[^\]]\{-}\\\@<!\]({{<\s*\(rel\)\?ref\s\+"\([^#]\{-}\)\(#.\{-}\)\?"\s\+>}}\\\@<!)',
+    \ '\\\@<!\[[^\]]\{-}\\\@<!\](#\(.\{-}\)\\\@<!)',
+    \ '\\\@<!\[[^\]]\{-}\\\@<!\](\(.\{-}\)\\\@<!)'
     \ ]
 
 " Create or follow ori_link link
@@ -238,22 +238,22 @@ function! s:followLink() abort
         if link_type == 0
             call search('^\[' . m[1] . '\\\@<!\]:\s', 's')
         elseif link_type == 1
-            let file_path = s:getFile(m[3])
+            let file_path = s:getFile(m[2])
             if file_path != ''
                 execute 'edit ' . file_path
                 if m[4] != ''
-                    if !s:jumpToAnchor(m[4], '')
-                        echo '[hugowiki.vim] Anchor ' . m[4] . ' not found.'
+                    if !s:jumpToAnchor(m[3], '')
+                        echo '[hugowiki.vim] Anchor ' . m[3] . ' not found.'
                     end
                 end
             else
                 echo '[hugowiki.vim] File not exists or multiple files match.'
             endif
         elseif link_type == 2
-            call s:jumpToAnchor(m[2], 's')
+            call s:jumpToAnchor(m[1], 's')
         elseif link_type == 3
-            call system('xdg-open ' . m[2])
-            echo '[hugowiki.vim] xdg-open ' . m[2]
+            call system('xdg-open ' . m[1])
+            echo '[hugowiki.vim] xdg-open ' . m[1]
         endif
     endif
 
@@ -275,31 +275,6 @@ function! g:hugowiki#foldexpr(lnum)
             return '>' .. (matchstr(syn_name, '\d') - 1)
         endif
     endif
-
-    " List TODO: simple method
-    " if syn_name == 'HWList'
-    "     let pline = getline(a:lnum - 1)
-    "     let nline = getline(a:lnum + 1)
-    "     let syn_name_pre = synIDattr(synID(a:lnum - 1, match(pline, '\S') + 1, 1), "name")
-    "     let syn_name_nxt = synIDattr(synID(a:lnum + 1, match(nline, '\S') + 1, 1), "name")
-    "
-    "     let change = strdisplaywidth(match(pline, '\S')) - strdisplaywidth(match(getline(a:lnum), '^\s\+'))
-    "     echo change
-    "
-    "     if syn_name_pre == 'HWList'
-    "     endif
-    "     return 'a1'
-    " endif
-
-    " hugo tag
-    " if syn_name == 'HWTagDelimiter'
-    "     let name_pattern = '\('.join(g:hugowiki_multiline_tags_with_end, '\|').'\)'
-    "     if getline(a:lnum) =~# '^{%\s\+' . name_pattern . '.*%}'
-    "         return 'a1'
-    "     elseif getline(a:lnum) =~# '^{%\s\+end' . name_pattern . '\s\+%}'
-    "         return 's1'
-    "     end
-    " endif
 
     " Code Block
     if syn_name =~# 'HWCodeDelimiterStart.*'
