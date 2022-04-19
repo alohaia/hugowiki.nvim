@@ -168,7 +168,7 @@ endfunction
 
 
 function! s:jumpToAnchor(a, flags)
-    let anc = tolower(substitute(a:a[1:], '-', '[ -]', 'g'))
+    let anc = tolower(substitute(a:a, '-', '[ -]', 'g'))
     if !search('^#\+\s\+' . anc . '\(\s*{.*}\)\?$'
         \ . '\|^#\+\s\+.*{.*\<\(alias\|id\)="[^"]*\<' . anc . '\>[^"]*".*}$'
         \ . '\|^#\+\s\+.*{.*\<\(alias\|id\)=''[^'']*\<' . anc . '\>[^'']*''.*}$'
@@ -242,7 +242,7 @@ function! s:followLink() abort
             if file_path != ''
                 execute 'edit ' . file_path
                 if m[3] != ''
-                    if !s:jumpToAnchor(m[3], '')
+                    if !s:jumpToAnchor(m[3][1:], '')
                         echo '[hugowiki.vim] Anchor ' . m[3] . ' not found.'
                     end
                 end
@@ -250,6 +250,7 @@ function! s:followLink() abort
                 echo '[hugowiki.vim] File not exists or multiple files match.'
             endif
         elseif link_type == 2
+            echo m
             call s:jumpToAnchor(m[1], 's')
         elseif link_type == 3
             call system('xdg-open ' . m[1])
