@@ -241,7 +241,7 @@ function! s:followLink() abort
             let file_path = s:getFile(m[2])
             if file_path != ''
                 execute 'edit ' . file_path
-                if m[4] != ''
+                if m[3] != ''
                     if !s:jumpToAnchor(m[3], '')
                         echo '[hugowiki.vim] Anchor ' . m[3] . ' not found.'
                     end
