@@ -2,7 +2,6 @@
 " Maintainer: Qihuan Liu <liu.qihuan@outlook.com>
 
 if exists('b:did_hugowiki')
-    let g:hugowiki_info = "[markdown/hugowiki.vim] b:did_ftplugin: " . b:did_ftplugin
     finish
 elseif &compatible
     echoerr "Only support Nvim."
@@ -20,23 +19,33 @@ if g:hugowiki_wrap == 1
     setlocal wrap
 endif
 
-if !hasmapto('<Plug>FollowLinkN')
-    nmap <buffer> <CR> <Plug>FollowLinkN
+if !hasmapto('<Plug>HWFollowLinkN')
+    nmap <buffer> <CR> <Plug>HWFollowLinkN
 endif
-if !hasmapto('<Plug>FollowLinkV')
-    xmap <buffer> <CR> <Plug>FollowLinkV
+if !hasmapto('<Plug>HWFollowLinkV')
+    xmap <buffer> <CR> <Plug>HWFollowLinkV
 end
-if !hasmapto('<Plug>FindLinkP')
-    nmap <buffer> <S-Tab> <Plug>FindLinkP
+if !hasmapto('<Plug>HWFindLinkP')
+    nmap <buffer> <S-Tab> <Plug>HWFindLinkP
 endif
-if !hasmapto('<Plug>FindLinkN')
-    nmap <buffer> <Tab> <Plug>FindLinkN
+if !hasmapto('<Plug>HWFindLinkN')
+    nmap <buffer> <Tab> <Plug>HWFindLinkN
 endif
-if !hasmapto('<Plug>ShiftTitlesInc')
-    nmap <nowait> <buffer> <Leader>>> <Plug>ShiftTitlesInc
+if !hasmapto('<Plug>HWShiftTitlesInc')
+    nmap <nowait><buffer> <Leader>>> <Plug>HWShiftTitlesInc
 endif
-if !hasmapto('<Plug>ShiftTitlesDec')
-    nmap <nowait> <buffer> <leader><< <Plug>ShiftTitlesDec
+if !hasmapto('<Plug>HWShiftTitlesDec')
+    nmap <nowait><buffer> <leader><< <Plug>HWShiftTitlesDec
+endif
+
+if g:hugowiki_use_imaps == 1
+    inoremap <buffer><unique> <expr> ： col('.') == 1 ? ': ' : '：'
+    inoremap <buffer><unique> <expr> :  col('.') == 1 ? ': ' : ':'
+    inoremap <buffer><unique> <expr> 》 col('.') == 1 ? '> ' : '》'
+    inoremap <buffer><unique> <expr> >  match(getline('.')[0:col('.')-1], '[^ >]') == -1 ? '> ' : '\>'
+    inoremap <buffer><unique> ~ \~
+    inoremap <buffer><unique> * \*
+    inoremap <buffer><unique> < \<
 endif
 
 if g:hugowiki_auto_update_lastmod == 1 && g:hugowiki#at_home() == 1

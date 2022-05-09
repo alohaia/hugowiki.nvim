@@ -2,7 +2,6 @@
 " Maintainer: Qihuan Liu <liu.qihuan@outlook.com>
 
 if exists('b:did_hugowiki')
-    let g:hugowiki_info = "[markdown/hugowiki.vim] b:did_ftplugin: " . b:did_ftplugin
     finish
 elseif &compatible
     echoerr "Only support Nvim."
