@@ -250,7 +250,6 @@ function! s:followLink() abort
                 echo '[hugowiki.vim] File not exists or multiple files match.'
             endif
         elseif link_type == 2
-            echo m
             call s:jumpToAnchor(m[1], 's')
         elseif link_type == 3
             call system('xdg-open ' . m[1])
@@ -419,3 +418,11 @@ function! g:hugowiki#Conv()
     " sub ?
 endfunction
 
+" manually load ftplugins while this is opt plugin.
+if &filetype == "markdown"
+    let g:hugowiki_type = "markdown"
+    runtime! ftplugin/markdown/hugowiki.vim
+elseif &filetype == "rmd"
+    let g:hugowiki_type = "rmd"
+    runtime! ftplugin/rmd/hugowiki.vim
+endif

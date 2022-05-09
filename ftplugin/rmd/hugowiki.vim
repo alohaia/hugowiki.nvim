@@ -1,8 +1,12 @@
 " Vim plugin for writing hugo posts
 " Maintainer: Qihuan Liu <liu.qihuan@outlook.com>
 
-if exists('b:did_hugowiki') || &compatible
-  finish
+if exists('b:did_hugowiki')
+    let g:hugowiki_info = "[markdown/hugowiki.vim] b:did_ftplugin: " . b:did_ftplugin
+    finish
+elseif &compatible
+    echoerr "Only support Nvim."
+    finish
 endif
 let b:did_hugowiki = 1
 
