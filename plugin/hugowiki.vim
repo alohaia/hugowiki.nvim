@@ -420,9 +420,7 @@ endfunction
 
 " manually load ftplugins while this is opt plugin.
 if &filetype == "markdown"
-    let g:hugowiki_type = "markdown"
     runtime! ftplugin/markdown/hugowiki.vim
 elseif &filetype == "rmd"
-    let g:hugowiki_type = "rmd"
     runtime! ftplugin/rmd/hugowiki.vim
 endif
