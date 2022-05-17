@@ -4,14 +4,23 @@
 if exists('b:current_syntax')
   finish
 endif
+if !exists('main_syntax')
+  let main_syntax = 'markdown'
+endif
+runtime! syntax/html.vim
+unlet! b:current_syntax
 
 syn iskeyword @,48-57,192-255,$,_
 syn sync fromstart
 
 " commen delimiter
 hi link HWDelimiter Comment
+
 " bad spell
-hi SpellBad gui=undercurl
+hi SpellBad gui=undercurl guifg=red
+hi SpellRare gui=undercurl,italic
+hi SpellLocal gui=undercurl,italic
+hi SpellCap gui=undercurl
 
 "======================================\ Special /======================================
 
@@ -28,7 +37,7 @@ hi link HWLine Comment
 
 syn cluster CHWInline
     \ contains=@CHWInlineSpecial,@CHWEnclosed,@CHWInlineCM,HWFootnote,@CHWHugoTag,
-    \   @CHWHtmlTag,@CHWLink,@CHWTextDeclaration,HWHtmlBr
+    \   @CHWLink,@CHWTextDeclaration
 syn cluster CHWWholeLine
     \ contains=HWFootnoteDefination,HWImage,@CHWHeading,@HWReference
 
@@ -36,13 +45,11 @@ syn cluster CHWWholeLine
 syn keyword HWKeyword TODO Same See
 syn match HWEscape '\\\ze.'
 syn match HWEmoji ':\w\+:'
-syn match HWHtmlBr '<br/\?>' conceal cchar=⤶      " ⤶↩↵
-syn cluster CHWInlineSpecial contains=HWKeyword,HWEscape,HWEmoji,HWHtmlBr
+syn cluster CHWInlineSpecial contains=HWKeyword,HWEscape,HWEmoji
 
 hi link HWKeyword Keyword
 hi link HWEscape Comment
 hi link HWEmoji Special
-hi link HWHtmlBr Comment
 
 "--------------------------------------\ Enclosed /-------------------------------------
 syn match HWString contains=@CHWInline +\\\@<!".\{-}"+ contains=TOP
@@ -80,7 +87,6 @@ syn match HWImage +!\[.\{-}\](.\{-1,})+ contains=HWLinkText,HWLinkTarget
 hi _HWLink cterm=underline gui=underline guifg=#48aff0
 hi link HWRawLink   _HWLink
 hi link HWLinkText  _HWLink
-hi link HWHtmlLink  _HWLink
 
 "-------------------------------------\ Foot Note /-------------------------------------
 syn region HWFootnote matchgroup=HWDelimiter keepend oneline
@@ -111,17 +117,6 @@ syn cluster CHWHugoTag contains=HWHugoTag,HWHugoTagRef
 hi link HWHugoTag htmlTagName
 hi link HWHugoTagItemValue String
 hi link HWHugoTagItemName htmlArg
-
-"--------------------------------------\ Html Tag /-------------------------------------
-syn match HWHtmlTag contains=HWHtmlTagDelimiter +\\\@<!</\?.\{-}\\\@<!>+
-syn match HWHtmlTagDelimiter contained +</\?\|/\?>+
-syn match HWComment '<!--.*-->'
-
-syn cluster CHWHtmlTag contains=HWHtmlTag,HWComment
-
-hi link HWHtmlTag htmlTagName
-hi link HWHtmlTagDelimiter HWDelimiter
-hi link HWComment Comment
 
 "----------------------------------\ Text declaration /---------------------------------
 syn region HWInsert matchgroup=HWDelimiter oneline keepend
@@ -265,3 +260,6 @@ hi link HWDefineContent Comment
 
 
 let b:current_syntax = 'markdown'
+if main_syntax ==# 'markdown'
+  unlet main_syntax
+endif
