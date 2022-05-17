@@ -62,8 +62,9 @@ hi link HWString String
 
 "---------------------------------\ Inline Code & Math /--------------------------------
 syn include @CHWIncludeCode_tex syntax/tex.vim
-syn region HWInlineCode matchgroup=HWCodeDelimiter keepend oneline start="\\\@<!`" end="`"
-syn region HWInlineMath matchgroup=HWDelimiter oneline start='\\\@<!\$' end='\$' skip="\\\$"
+syn region HWInlineCode matchgroup=HWCodeDelimiter keepend oneline start=+\\\@<!`+ end=+`+
+syn region HWInlineCode matchgroup=HWCodeDelimiter keepend oneline start=+\\\@<!``+ end=+``+
+syn region HWInlineMath matchgroup=HWDelimiter oneline start=+\\\@<!\$+ end=+\$+ skip=+\\\$+
     \ contains=@CHWIncludeCode_tex
 
 syn cluster CHWInlineCM contains=HWInlineCode,HWInlineMath
