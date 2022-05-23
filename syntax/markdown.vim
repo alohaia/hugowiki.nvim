@@ -60,11 +60,11 @@ hi link HWEscape Comment
 hi link HWEmoji Special
 
 "--------------------------------------\ Enclosed /-------------------------------------
-syn match HWString contains=@Spell,@CHWInline +\\\@<!".\{-}"+ contains=TOP
-syn match HWString contains=@Spell,@CHWInline +\\\@<!'.\{-}'+ contains=TOP
-syn match HWString contains=@Spell,@CHWInline +\\\@<!“.\{-}”+ contains=TOP
-syn match HWString contains=@Spell,@CHWInline +\\\@<!‘.\{-}’+ contains=TOP
-syn cluster CHWEnclosed contains=HWString,HWBracket
+syn match HWString contains=@Spell,@CHWInline +\\\@<!".\{-}"+ contains=ALL
+syn match HWString contains=@Spell,@CHWInline +\\\@<!'.\{-}'+ contains=ALL
+syn match HWString contains=@Spell,@CHWInline +\\\@<!“.\{-}”+ contains=ALL
+syn match HWString contains=@Spell,@CHWInline +\\\@<!‘.\{-}’+ contains=ALL
+syn cluster CHWEnclosed contains=HWString
 
 hi link HWString String
 
@@ -112,23 +112,29 @@ hi link HWFootnoteDefination _HWLink
 "--------------------------------------\ Hugo Tag /-------------------------------------
 syn region HWHugoTag matchgroup=HWDelimiter keepend oneline
     \ start='{{<\s*/\?' end='\s*>}}'
+    \ contains=HWHugoTagItem
 syn region HWHugoTag matchgroup=HWDelimiter keepend oneline
     \ start='{{%\s*/\?' end='\s*%}}'
+    \ contains=HWHugoTagItem
 syn region HWHugoTagRef matchgroup=HWDelimiter keepend oneline
     \ start=+{{<\s*\(rel\)\?ref\s\+"+ end=+"\s*>}}+
-
-syn match HWHugoTagItem +\w\+=\([^ ='"]\{1,}\|".\{-}"\)+ contained
-    \ contains=HWHugoTagItemName,HWHugoTagItemValue containedin=HWHugoTag,HWHugoTagRef
-syn match HWHugoTagItemName +\w*\ze=\&+ contained
-syn match HWHugoTagItemValue +"\zs[^=]*\ze"+ contains=@CHWInline contained
-syn match HWHugoTagItemValue +\d\++ contained
-syn keyword HWHugoTagItemValue true false contained
-
+    \ contains=HWHugoTagItem
 syn cluster CHWHugoTag contains=HWHugoTag,HWHugoTagRef
 
+syn match HWHugoTagItem +\w\+\s\?=\s\?\(".\{-}"\|true\|false\|\d*\)+ contained
+    \ contains=HWHugoTagItemName,@CHWHugoTagItemValue
+syn match   HWHugoTagItemName  +\w*\ze\s\?=\s\?\&+ contained
+syn cluster CHWHugoTagItemValue
+    \ contains=HWHugoTagItemSrting,HWHugoTagItemNumber,HWHugoTagItemBoolean
+syn match   HWHugoTagItemSrting  +".\{-}"+
+syn match   HWHugoTagItemNumber  +\d\++ contained
+syn keyword HWHugoTagItemBoolean true false contained
+
 hi link HWHugoTag htmlTagName
-hi link HWHugoTagItemValue String
 hi link HWHugoTagItemName htmlArg
+hi link HWHugoTagItemSrting  String
+hi link HWHugoTagItemNumber  Number
+hi link HWHugoTagItemBoolean Boolean
 
 "----------------------------------\ Text declaration /---------------------------------
 syn region HWInsert matchgroup=HWDelimiter oneline keepend
