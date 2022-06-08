@@ -168,17 +168,17 @@ hi HWHighlight cterm=standout gui=standout
 
 "--------------------------------------\ Heading /--------------------------------------
 syn region HWHeading1 matchgroup=HWH1Delimiter start='^#\s\+'      end='$' keepend oneline
-    \ contains=@Spell,@CHWTextDeclaration
+    \ contains=@Spell,@CHWTextDeclaration,HWInlineCode
 syn region HWHeading2 matchgroup=HWH2Delimiter start='^##\s\+'     end='$' keepend oneline
-    \ contains=@Spell,@CHWTextDeclaration
+    \ contains=@Spell,@CHWTextDeclaration,HWInlineCode
 syn region HWHeading3 matchgroup=HWH3Delimiter start='^###\s\+'    end='$' keepend oneline
-    \ contains=@Spell,@CHWTextDeclaration
+    \ contains=@Spell,@CHWTextDeclaration,HWInlineCode
 syn region HWHeading4 matchgroup=HWH4Delimiter start='^####\s\+'   end='$' keepend oneline
-    \ contains=@Spell,@CHWTextDeclaration
+    \ contains=@Spell,@CHWTextDeclaration,HWInlineCode
 syn region HWHeading5 matchgroup=HWH5Delimiter start='^#####\s\+'  end='$' keepend oneline
-    \ contains=@Spell,@CHWTextDeclaration
+    \ contains=@Spell,@CHWTextDeclaration,HWInlineCode
 syn region HWHeading6 matchgroup=HWH6Delimiter start='^######\s\+' end='$' keepend oneline
-    \ contains=@Spell,@CHWTextDeclaration
+    \ contains=@Spell,@CHWTextDeclaration,HWInlineCode
 
 syn region HWHeadingAttr matchgroup=HWDelimiter start=+{+ end=+}+ keepend oneline contained
     \ containedin=HWHeading1,HWHeading2,HWHeading3,HWHeading4,HWHeading5,HWHeading6
