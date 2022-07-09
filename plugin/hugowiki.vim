@@ -382,6 +382,22 @@ function! g:hugowiki#newDiary()
     exec 'edit' g:hugowiki_home .. '/' .. relpath
 endfunction
 
+function! g:hugowiki#changeHeadingLevel(level)
+    let line = getline('.')
+    let current_level = match(line, '^#\+\zs\s')
+
+    if current_level == a:level
+        return
+    endif
+
+    if current_level == -1
+        let line = repeat("#", a:level) . ' ' . trim(line, ' ', 1)
+    else
+        let line = substitute(line, '^#\+', repeat("#", a:level), "")
+    endif
+
+    call setline('.', line)
+endfunction
 
 noremap <unique> <SID>FollowLinkN <Cmd>call <SID>followLink()<CR>
 noremap <unique> <SID>FollowLinkV <ESC>gv<Cmd>call <SID>followLink()<CR><ESC>

@@ -117,6 +117,10 @@ snippet hdt "hidden text" iw
 {{% hdt "${1:${VISUAL}}" %}}
 endsnippet
 
+snippet sg "sense group" iw
+{{% sg %}}${1:${VISUAL}}{{% /sg %}}
+endsnippet
+
 snippet tbl "table with title and caption" bw
 {{% table title="${1}" caption="${2}" left_sticky=${3:false} `!p snip.rv = ('id="tbl_' + anchor_format(t[1]) + '" ') if t[1] else ""` %}}
 ${0:${VISUAL}}

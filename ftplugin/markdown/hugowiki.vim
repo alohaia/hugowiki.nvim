@@ -59,4 +59,11 @@ if g:hugowiki_auto_save
     augroup END
 endif
 
-command! HWConv     call g:hugowiki#Conv()
+command! HWConv call g:hugowiki#Conv()
+
+nnoremap <C-1> <Cmd>call g:hugowiki#changeHeadingLevel(1)<CR>
+nnoremap <C-2> <Cmd>call g:hugowiki#changeHeadingLevel(2)<CR>
+nnoremap <C-3> <Cmd>call g:hugowiki#changeHeadingLevel(3)<CR>
+nnoremap <C-4> <Cmd>call g:hugowiki#changeHeadingLevel(4)<CR>
+nnoremap <C-5> <Cmd>call g:hugowiki#changeHeadingLevel(5)<CR>
+nnoremap <C-6> <Cmd>call g:hugowiki#changeHeadingLevel(6)<CR>
