@@ -84,19 +84,25 @@ hi link HWInlineMath PreProc
 "------------------------------------\ Link & Image /-----------------------------------
 
 syn match HWRawLink '\(ftp\|file\|ftp\|ftps\|gemini\|git\|gopher\|https\?\|irc\|ircs\|kitty\|mailto\|news\|sftp\|ssh\)://[^ ]\+' keepend
+syn match HWRawLink 'www\.\a\+\.\a\+\(/[^ ]*\)\?' keepend
 syn match _HWRawLinkId +#.\++ contained
 syn match _HWRawLinkRel +/.\++ contained
 
 syn match HWLink +\[[^[]\{-1,}\](.\{-1,})+ keepend contains=HWLinkText,HWLinkTarget
 syn match HWImage +!\[.\{-}\](.\{-1,})+ contains=HWLinkText,HWLinkTarget
 syn match HWLinkText +\[\zs.\{-1,}\ze\]+ keepend contained contains=@Spell,@CHWInline
-syn match HWLinkTarget +(\zs.\{-1,}\ze)+ keepend contained contains=HWRawLink,_HWRawLinkId,_HWRawLinkRel,HWHugoTagRef
+syn match HWLinkTarget +(\zs.\{-1,}\ze)+ keepend contained contains=HWRawLink,_HWRawLinkId,_HWRawLinkRel,HWHugoTagRef transparent
 
 syn cluster CHWLink contains=HWLink,HWRawLink
 
+hi link HWLink HWDelimiter
+hi link HWImage HWDelimiter
+
 hi _HWLink cterm=underline gui=underline guifg=#48aff0
-hi link HWRawLink   _HWLink
-hi link HWLinkText  _HWLink
+hi link HWRawLink     _HWLink
+hi link HWLinkText    _HWLink
+hi link _HWRawLinkId  _HWLink
+hi link _HWRawLinkRel _HWLink
 
 "-------------------------------------\ Foot Note /-------------------------------------
 syn region HWFootnote matchgroup=HWDelimiter keepend oneline
@@ -110,18 +116,18 @@ hi link HWFootnote           _HWLink
 hi link HWFootnoteDefination _HWLink
 
 "--------------------------------------\ Hugo Tag /-------------------------------------
-syn region HWHugoTag matchgroup=HWDelimiter keepend oneline
+syn region HWHugoTag matchgroup=HWDelimiter keepend
     \ start='{{<\s*/\?' end='\s*>}}'
     \ contains=HWHugoTagItem
-syn region HWHugoTag matchgroup=HWDelimiter keepend oneline
+syn region HWHugoTag matchgroup=HWDelimiter keepend
     \ start='{{%\s*/\?' end='\s*%}}'
     \ contains=HWHugoTagItem
-syn region HWHugoTagRef matchgroup=HWDelimiter keepend oneline
+syn region HWHugoTagRef matchgroup=HWDelimiter keepend
     \ start=+{{<\s*\(rel\)\?ref\s\+"+ end=+"\s*>}}+
     \ contains=HWHugoTagItem
 syn cluster CHWHugoTag contains=HWHugoTag,HWHugoTagRef
 
-syn match HWHugoTagItem +\w\+\s\?=\s\?\(".\{-}"\|true\|false\|\d*\)+ contained
+syn match   HWHugoTagItem +\w\+\s\?=\s\?\(".\{-}"\|true\|false\|\d*\)+ contained
     \ contains=HWHugoTagItemName,@CHWHugoTagItemValue
 syn match   HWHugoTagItemName  +\w*\ze\s\?=\s\?\&+ contained
 syn cluster CHWHugoTagItemValue
