@@ -263,7 +263,8 @@ hi link HWMathDelimiterEnd   HWDelimiter
 hi link HWMathBlock PreProc
 
 "---------------------------------------\ lists /---------------------------------------
-syn match HWListMarker '^\s*\zs\(\d\+\.\|\d\+)\|-\|\*\|+\)\ze\s\+'
+syn match HWListMarker '^\s*\zs\(\d\+\.\|\d\+)\)\ze\s\+'
+syn match HWListMarker '^\s*\zs\(-\|\*\|+\)\ze\s\+' conceal cchar=•
 syn match HWCheckListMarker '^\s*\zs\(\(-\|\*\|+\) \)\?\[[ X]\]\ze\s\+'
 
 hi link HWListMarker Label
