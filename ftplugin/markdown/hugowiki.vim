@@ -26,10 +26,10 @@ if !hasmapto('<Plug>HWFollowLinkV')
     xmap <buffer> <CR> <Plug>HWFollowLinkV
 end
 if !hasmapto('<Plug>HWFindLinkP')
-    nmap <buffer> <S-Tab> <Plug>HWFindLinkP
+    nmap <buffer> <C-,> <Plug>HWFindLinkP
 endif
 if !hasmapto('<Plug>HWFindLinkN')
-    nmap <buffer> <Tab> <Plug>HWFindLinkN
+    nmap <buffer> <C-.> <Plug>HWFindLinkN
 endif
 if !hasmapto('<Plug>HWShiftTitlesInc')
     nmap <nowait><buffer> <Leader>>> <Plug>HWShiftTitlesInc
