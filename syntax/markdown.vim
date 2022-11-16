@@ -60,10 +60,10 @@ hi link HWEscape Comment
 hi link HWEmoji Special
 
 "--------------------------------------\ Enclosed /-------------------------------------
-syn match HWString contains=@Spell,@CHWInline +\\\@<!".\{-}"+ contains=ALL
-syn match HWString contains=@Spell,@CHWInline +\\\@<!'.\{-}'+ contains=ALL
-syn match HWString contains=@Spell,@CHWInline +\\\@<!“.\{-}”+ contains=ALL
-syn match HWString contains=@Spell,@CHWInline +\\\@<!‘.\{-}’+ contains=ALL
+syn match HWString contains=@Spell,@CHWInline +".\{-}"+ contains=ALL
+syn match HWString contains=@Spell,@CHWInline +\(\s\|^\)\zs'.\{-}'\ze\(\s\|$\)+ contains=ALL
+syn match HWString contains=@Spell,@CHWInline +“.\{-}”+ contains=ALL
+syn match HWString contains=@Spell,@CHWInline +‘.\{-}’+ contains=ALL
 syn cluster CHWEnclosed contains=HWString
 
 hi link HWString String
