@@ -70,9 +70,9 @@ hi link HWString String
 
 "---------------------------------\ Inline Code & Math /--------------------------------
 syn include @CHWIncludeCode_tex syntax/tex.vim
-syn region HWInlineCode matchgroup=HWCodeDelimiter keepend oneline start=+\\\@<!`+ end=+`+
-syn region HWInlineCode matchgroup=HWCodeDelimiter keepend oneline start=+\\\@<!``+ end=+``+
-syn region HWInlineMath matchgroup=HWDelimiter oneline start=+\\\@<!\$+ end=+\$+ skip=+\\\$+
+syn region HWInlineCode matchgroup=HWCodeDelimiter keepend oneline start=+`+ end=+`+
+syn region HWInlineCode matchgroup=HWCodeDelimiter keepend oneline start=+``+ end=+``+
+syn region HWInlineMath matchgroup=HWDelimiter oneline start=+\$+ end=+\$+ skip=+\\\$+
     \ contains=@CHWIncludeCode_tex
 
 syn cluster CHWInlineCM contains=HWInlineCode,HWInlineMath
@@ -106,10 +106,10 @@ hi link _HWRawLinkRel _HWLink
 
 "-------------------------------------\ Foot Note /-------------------------------------
 syn region HWFootnote matchgroup=HWDelimiter keepend oneline
-    \ start='\S\zs\\\@<!\[\ze\^' end='\]:\@<!' skip='\\]'
+    \ start='\S\zs\[\ze\^' end='\]:\@<!' skip='\\]'
     \ contains=@Spell
 syn region HWFootnoteDefination matchgroup=HWDelimiter keepend oneline
-    \ start='^\\\@<!\[\ze\^' end='\]:\s' skip='\\]:\s'
+    \ start='^\[\ze\^' end='\]:\s' skip='\\]:\s'
     \ contains=@Spell
 
 hi link HWFootnote           _HWLink
@@ -144,22 +144,22 @@ hi link HWHugoTagItemBoolean Boolean
 
 "----------------------------------\ Text declaration /---------------------------------
 syn region HWInsert matchgroup=HWDelimiter oneline keepend
-    \ start=+\\\@<!<ins>+ end=+</ins>+ skip=+\\</ins>+
+    \ start=+<ins>+ end=+</ins>+ skip=+\\</ins>+
     \ contains=@Spell,@CHWInline
 syn region HWDelete matchgroup=HWDelimiter oneline keepend
     \ start=+[^~]\{-}\zs\~\~+ end=+\~\~\ze[^~]\{-}+ skip=+\\\~\\\~+
     \ contains=@Spell,@CHWInline
 syn region HWItalic matchgroup=HWDelimiter oneline keepend
-    \ start=+\\\@<!\*+ end=+\*+ skip='\\\*'
+    \ start=+\*+ end=+\*+ skip='\\\*'
     \ contains=@Spell,@CHWInline
 syn region HWBold matchgroup=HWDelimiter oneline keepend
-    \ start=+\\\@<!\*\*+ end=+\*\*+ skip=+\\\*\\\*+
+    \ start=+\*\*+ end=+\*\*+ skip=+\\\*\\\*+
     \ contains=@Spell,@CHWInline
 syn region HWItalicBold matchgroup=HWDelimiter oneline
-    \ start=+\\\@<!\*\*\*+ end=+\*\*\*+ skip=+\\\*\\\*\*+
+    \ start=+\*\*\*+ end=+\*\*\*+ skip=+\\\*\\\*\*+
     \ contains=@Spell,@CHWInline
 syn region HWHighlight matchgroup=HWDelimiter oneline
-    \ start=+\\\@<!<mark>+ end=+\\\@<!</mark>+
+    \ start=+<mark>+ end=+</mark>+
     \ contains=@Spell,@CHWInline
 
 syn cluster CHWTextDeclaration
