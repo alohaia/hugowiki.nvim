@@ -283,6 +283,11 @@ syn region HWDefineContent matchgroup=HWDelimiter contained keepend
 hi HWDefineHead cterm=bold gui=bold
 hi link HWDefineContent Comment
 
+"-------------------------\ hugowiki_spellcheck_ignore_upcase /-------------------------
+if g:hugowiki_spellcheck_ignore_upcase
+    syn match HWExCapitalWords +\<\w*[A-Z]\K*\>\|'s+ contains=@NoSpell
+endif
+
 let b:current_syntax = 'markdown'
 if main_syntax ==# 'markdown'
   unlet main_syntax

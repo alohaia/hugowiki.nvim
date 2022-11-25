@@ -20,6 +20,7 @@ let g:hugowiki_wrap = get(g:, 'hugowiki_wrap', 1)
 let g:hugowiki_auto_save = get(g:, 'hugowiki_auto_save', 1)
 let g:hugowiki_auto_update_lastmod = get(g:, "hugowiki_auto_update_lastmod", 1)
 let g:hugowiki_lastmod_under_date = get(g:, "hugowiki_auto_update_lastmod", 1)
+let g:hugowiki_spellcheck_ignore_upcase = get(g:, "hugowiki_spellcheck_ignore_upcase", 1)
 
 function! g:hugowiki#at_home()
     return match(expand("%:p:h").'/', expand(g:hugowiki_home).'/') == 0
