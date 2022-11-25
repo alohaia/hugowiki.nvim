@@ -285,6 +285,7 @@ hi link HWDefineContent Comment
 
 "-------------------------\ hugowiki_spellcheck_ignore_upcase /-------------------------
 if g:hugowiki_spellcheck_ignore_upcase
+    syn match HWExCapitalWords +\<\w*[A-Z]\K*\>\|'s+ transparent containedin=ALL contains=@NoSpell
     syn match HWExCapitalWords +\<\w*[A-Z]\K*\>\|'s+ contains=@NoSpell
 endif
 
