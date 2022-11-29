@@ -49,7 +49,10 @@ if g:hugowiki_use_imaps == 1
 endif
 
 if g:hugowiki_auto_update_lastmod == 1 && g:hugowiki#at_home() == 1
-    au BufWrite <buffer> call g:hugowiki#UpdateModTime()
+    execute "augroup update_lastmod_"..bufnr()
+        au!
+        au BufWrite <buffer> call g:hugowiki#UpdateModTime(bufnr())
+    augroup END
 endif
 
 if g:hugowiki_auto_save

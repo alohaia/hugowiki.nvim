@@ -345,31 +345,31 @@ function! s:shiftTitles(inc)
     call cursor(curpos[1], curpos[2])
 endfunction
 
-function! g:hugowiki#UpdateModTime()
-    let now = system('date +%Y-%m-%dT%T%:z')[0:-2]
-    let header_end = searchpos('\n\zs---', 'n')
+function! g:hugowiki#UpdateModTime(buf)
+    let now = 'lastmod: ' . system('date +%Y-%m-%dT%T%:z')[0:-2]
+    let header_end = searchpos('\n\zs---', 'n')[0]
     let date_pos = searchpos('^date: ', 'n')[0]
-    let pos = searchpos('^lastmod:', 'n')
-    let save_cursor = getpos(".")
+    let pos = searchpos('^lastmod:', 'n')[0]
 
-    if date_pos[0] > header_end[0]
-        date_pos[0] = header_end[0] - 1
+    if date_pos[0] > header_end
+        date_pos[0] = header_end - 1
     endif
 
-    if pos[0] != 0 && pos[0] < header_end[0] " already have lastmod setted
-        call setline(pos[0], 'lastmod: ' . now)
-        if g:hugowiki_lastmod_under_date == 1 && pos[0] != date_pos[0]+1
-            execute pos[0] . 'move ' . date_pos[0]
+    if pos != 0 && pos < header_end " already have lastmod setted
+        if g:hugowiki_lastmod_under_date == 1 && pos != date_pos+1
+            call nvim_buf_set_lines(a:buf, pos-1, pos, 0, [])
+            let _pos = date_pos < pos ? date_pos : date_pos-1
+            call nvim_buf_set_lines(a:buf, _pos, _pos, 0, [now])
+        else
+            call nvim_buf_set_lines(a:buf, pos-1, pos, 0, [now])
         endif
     else
         if g:hugowiki_lastmod_under_date == 1
-            call append(date_pos, 'lastmod: ' . now)
+            call nvim_buf_set_lines(a:buf, date_pos, date_pos, 0, [now])
         else
-            call append(header_end[0]-1, 'lastmod: ' . now)
+            call nvim_buf_set_lines(a:buf, header_end-1, header_end-1, 0, [now])
         endif
     endif
-
-    call setpos('.', save_cursor)
 endfunction
 
 function! g:hugowiki#newDiary()
