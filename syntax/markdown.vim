@@ -127,9 +127,9 @@ syn region HWHugoTagRef matchgroup=HWDelimiter keepend
     \ contains=HWHugoTagItem
 syn cluster CHWHugoTag contains=HWHugoTag,HWHugoTagRef
 
-syn match   HWHugoTagItem +\w\+\s\?=\s\?\(".\{-}"\|true\|false\|\d*\)+ contained
+syn match   HWHugoTagItem +[A-Za-z-]\+\s\?=\s\?\(".\{-}"\|true\|false\|\d*\)+ contained
     \ contains=HWHugoTagItemName,@CHWHugoTagItemValue
-syn match   HWHugoTagItemName  +\w*\ze\s\?=\s\?\&+ contained
+syn match   HWHugoTagItemName  +[A-Za-z-]*\ze\s\?=\s\?\&+ contained
 syn cluster CHWHugoTagItemValue
     \ contains=HWHugoTagItemSrting,HWHugoTagItemNumber,HWHugoTagItemBoolean
 syn match   HWHugoTagItemSrting  +".\{-}"+
