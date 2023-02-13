@@ -400,12 +400,24 @@ function! g:hugowiki#changeHeadingLevel(level)
     call setline('.', line)
 endfunction
 
+function! s:puncConv()
+    s/\s*,\s*/，/ge
+    s/\s*\.\s*/。/ge
+    s/\s*(\s*/（/ge
+    s/\s*)\s*/）/ge
+    s/\s*:\s*/：/ge
+    s/\s*;\s*/；/ge
+    s/\s*!\s*/！/ge
+    s/\s*?\s*/？/ge
+endfunction
+
 noremap <unique> <SID>FollowLinkN <Cmd>call <SID>followLink()<CR>
 noremap <unique> <SID>FollowLinkV <ESC>gv<Cmd>call <SID>followLink()<CR><ESC>
 noremap <unique> <SID>FindLinkP <Cmd>call <SID>findLink(1)<CR>
 noremap <unique> <SID>FindLinkN <Cmd>call <SID>findLink(0)<CR>
 noremap <unique> <SID>ShiftTitlesInc <Cmd>call <SID>shiftTitles(1)<CR>
 noremap <unique> <SID>ShiftTitlesDec <Cmd>call <SID>shiftTitles(0)<CR>
+noremap <unique> <SID>PuncConv <Cmd>call <SID>puncConv()<CR>
 
 noremap <unique><script> <Plug>HWFollowLinkN <SID>FollowLinkN
 noremap <unique><script> <Plug>HWFollowLinkV <SID>FollowLinkV
@@ -413,6 +425,7 @@ noremap <unique><script> <Plug>HWFindLinkP <SID>FindLinkP
 noremap <unique><script> <Plug>HWFindLinkN <SID>FindLinkN
 noremap <unique><script> <Plug>HWShiftTitlesDec <SID>ShiftTitlesDec
 noremap <unique><script> <Plug>HWShiftTitlesInc <SID>ShiftTitlesInc
+noremap <unique><script> <Plug>HWPuncConv <SID>PuncConv
 
 function! g:hugowiki#Conv()
     %s/{\@<!{%/{{%/g
