@@ -409,6 +409,7 @@ function! s:puncConv()
     s/\s*;\s*/；/ge
     s/\s*!\s*/！/ge
     s/\s*?\s*/？/ge
+    s/\s*[~～]\s*/--/ge
 endfunction
 
 noremap <unique> <SID>FollowLinkN <Cmd>call <SID>followLink()<CR>
@@ -443,7 +444,6 @@ function! g:hugowiki#Conv()
     %s/\(\\\|\~\)\@<!\~\([^~ ]\{1,}\)\~\~\@!/<sub>\2<\/sub>/g
     %s/\(\s*- .*\)：$/\1/g
     %s/date: \(\S\+\) \(\S\+\)/date: \1T\2+08:00
-    " sub ?
 endfunction
 
 " manually load ftplugins while this is opt plugin.
