@@ -45,7 +45,7 @@ hi link HWLine Comment
 
 syn cluster CHWInline
     \ contains=@CHWInlineSpecial,@CHWEnclosed,@CHWInlineCM,HWFootnote,@CHWHugoTag,
-    \   @CHWLink,@CHWTextDeclaration
+    \   @CHWLink,@CHWTextDeclaration,htmlTag
 syn cluster CHWWholeLine
     \ contains=HWFootnoteDefination,HWImage,@CHWHeading,@HWReference
 
