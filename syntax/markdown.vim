@@ -23,12 +23,6 @@ hi SpellLocal gui=undercurl,italic
 hi SpellCap gui=undercurl
 " conceal
 hi link Conceal Normal
-let norm_gbg = synIDattr(hlID("Normal"), "bg", "gui")
-let norm_cbg = synIDattr(hlID("Normal"), "bg", "cterm")
-exec "hi Conceal ctermfg=" .. synIDattr(hlID("Conceal"), "fg", "cterm") ..
-    \ " ctermbg=" .. (norm_cbg ? norm_cbg : "NONE") ..
-    \ " guifg=" .. synIDattr(hlID("Conceal"), "fg", "gui") ..
-    \ " guibg=" .. (norm_gbg ? norm_gbg : "NONE")
 
 "======================================\ Special /======================================
 
