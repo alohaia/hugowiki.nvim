@@ -375,7 +375,7 @@ endfunction
 function! g:hugowiki#newDiary()
     let relpath = 'content/diary/' . strftime('%Y/%m/%d') . '/index.md'
     if glob(expand([g:hugowiki_home, relpath]->join('/'))) == ''
-        call system(['hugo -s', g:hugowiki_home, 'new', relpath]->join(' '))
+        call system(['hugo -s', g:hugowiki_home, 'new content', relpath]->join(' '))
         echo '[hugowiki.vim] content/diary/' . strftime('%Y/%m/%d') . '/index.md created.'
     else
         echo '[hugowiki.vim] content/diary/' . strftime('%Y/%m/%d') . '/index.md already exists.'
