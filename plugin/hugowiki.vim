@@ -410,6 +410,7 @@ function! s:puncConv()
     s/\s*!\s*/！/ge
     s/\s*?\s*/？/ge
     s/\s*[~～]\s*/--/ge
+    s/^\(\d\+\)。/\1. /ge
 endfunction
 
 noremap <unique> <SID>FollowLinkN <Cmd>call <SID>followLink()<CR>
