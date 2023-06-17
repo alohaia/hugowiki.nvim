@@ -185,11 +185,11 @@ syn region HWHeadingAttr matchgroup=HWDelimiter start=+{+ end=+}+ keepend onelin
     \ contains=HWHeadingAttrClass,HWHeadingAttrId,HWHeadingAttrItem
 syn match HWHeadingAttrClass +\.\S\++ contained
 syn match HWHeadingAttrId +#\S\++ contained
-syn match HWHeadingAttrItem +\w\+="[^"]\{-}"+ contained contains=HWHeadingAttrItemName,HWHeadingAttrItemValue
-syn match HWHeadingAttrItem +\w\+='[^']\{-}'+ contained contains=HWHeadingAttrItemName,HWHeadingAttrItemValue
-syn match HWHeadingAttrItemName +\w*\ze=+ contained
-syn match HWHeadingAttrItemValue +"[^"]*"+ contained
-syn match HWHeadingAttrItemValue +'[^']*'+ contained
+syn match HWHeadingAttrItem +\w\+\s*=\s*\("[^"]\{-}"\|'[^']\{-}'\|\w\+\)+ contained contains=HWHeadingAttrItemName,HWHeadingAttrItemValue
+syn match HWHeadingAttrItemName +\w\++ contained
+syn match HWHeadingAttrItemValue +=\s*\zs"[^"]*"+ contained
+syn match HWHeadingAttrItemValue +=\s*\zs'[^']*'+ contained
+syn match HWHeadingAttrItemValue +=\s*\zs\w\++ contained
 
 syn cluster CHWHeading contains=HWHeading1,HWHeading2,HWHeading3,HWHeading4,HWHeading5,HWHeading6
 
@@ -211,7 +211,7 @@ hi link HWH6Delimiter HWDelimiter
 hi link HWHeadingAttrClass Identifier
 hi link HWHeadingAttrId Identifier
 hi link HWHeadingAttrItemValue String
-hi link HWHeadingAttrItemName Identifier
+hi link HWHeadingAttrItemName htmlArg
 
 "-------------------------------------\ Reference /-------------------------------------
 syn region HWReference oneline
