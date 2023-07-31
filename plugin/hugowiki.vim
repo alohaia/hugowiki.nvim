@@ -411,15 +411,21 @@ function! s:puncConv()
     s/\s*?\s*/？/ge
     s/\s*[~～]\s*/--/ge
     s/^\(\s*\d\+\)。/\1. /ge
+    s/\d\zs。\ze\d/./ge
     s/"\(.\{-}\)"/“\1”/ge
+    s/\(\[.\{-}\]\)（\(.\{-}\)）/\1(\2)/ge
 
-    s/\([\u4e00-\u9fff]\)\(\w\)/\1 \2/ge
-    s/\(\w\|%\)\([\u4e00-\u9fff]\)/\1 \2/ge
+    s/\([\u4e00-\u9fff]\)\ze\(\w\)/\1 /ge
+    s/\(\w\|%\)\ze\([\u4e00-\u9fff]\)/\1 /ge
+    s/\([\u4e00-\u9fff，。！？“”；：、（）]\)\s\+\ze\([\u4e00-\u9fff，。！？“”；：、（）]\)/\1/ge
 
-    s/\(\d\)\([\u4e00-\u9fff]\|\a\)/\1 \2/ge
-    s/\([\u4e00-\u9fff]\|\a\)\(\d\)/\1 \2/ge
+    " s/\(\d\)\([\u4e00-\u9fff]\|\a\)/\1 \2/ge
+    " s/\([\u4e00-\u9fff]\|\a\)\(\d\)/\1 \2/ge
     s/\(\d\)\s\+%/\1%/ge
-    s/\(\d\)\s\+\(\d\)/\1\2/ge
+    s/\(\d\)\s\+\ze\(\d\)/\1/ge
+
+    s/^：/: /e
+    s/\s\+$//e
 endfunction
 
 noremap <unique> <SID>FollowLinkN <Cmd>call <SID>followLink()<CR>

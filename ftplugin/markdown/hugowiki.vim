@@ -70,3 +70,6 @@ nnoremap <C-3> <Cmd>call g:hugowiki#changeHeadingLevel(3)<CR>
 nnoremap <C-4> <Cmd>call g:hugowiki#changeHeadingLevel(4)<CR>
 nnoremap <C-5> <Cmd>call g:hugowiki#changeHeadingLevel(5)<CR>
 nnoremap <C-6> <Cmd>call g:hugowiki#changeHeadingLevel(6)<CR>
+
+xnoremap <C-,> "zc<sub><C-r>z</sub><ESC>
+xnoremap <C-.> "zc<sup><C-r>z</sup><ESC>
