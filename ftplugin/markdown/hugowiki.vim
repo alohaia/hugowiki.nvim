@@ -25,12 +25,12 @@ endif
 if !hasmapto('<Plug>HWFollowLinkV')
     xmap <buffer> <CR> <Plug>HWFollowLinkV
 end
-if !hasmapto('<Plug>HWFindLinkP')
-    nmap <buffer> <C-,> <Plug>HWFindLinkP
-endif
-if !hasmapto('<Plug>HWFindLinkN')
-    nmap <buffer> <C-.> <Plug>HWFindLinkN
-endif
+" if !hasmapto('<Plug>HWFindLinkP')
+"     nmap <buffer> <C-,> <Plug>HWFindLinkP
+" endif
+" if !hasmapto('<Plug>HWFindLinkN')
+"     nmap <buffer> <C-.> <Plug>HWFindLinkN
+" endif
 if !hasmapto('<Plug>HWShiftTitlesInc')
     nmap <nowait><buffer> <Leader>>> <Plug>HWShiftTitlesInc
 endif
@@ -64,12 +64,18 @@ endif
 
 command! HWConv call g:hugowiki#Conv()
 
-nnoremap <C-1> <Cmd>call g:hugowiki#changeHeadingLevel(1)<CR>
-nnoremap <C-2> <Cmd>call g:hugowiki#changeHeadingLevel(2)<CR>
-nnoremap <C-3> <Cmd>call g:hugowiki#changeHeadingLevel(3)<CR>
-nnoremap <C-4> <Cmd>call g:hugowiki#changeHeadingLevel(4)<CR>
-nnoremap <C-5> <Cmd>call g:hugowiki#changeHeadingLevel(5)<CR>
-nnoremap <C-6> <Cmd>call g:hugowiki#changeHeadingLevel(6)<CR>
+nnoremap <buffer> <C-1> <Cmd>call g:hugowiki#changeHeadingLevel(1)<CR>
+nnoremap <buffer> <C-2> <Cmd>call g:hugowiki#changeHeadingLevel(2)<CR>
+nnoremap <buffer> <C-3> <Cmd>call g:hugowiki#changeHeadingLevel(3)<CR>
+nnoremap <buffer> <C-4> <Cmd>call g:hugowiki#changeHeadingLevel(4)<CR>
+nnoremap <buffer> <C-5> <Cmd>call g:hugowiki#changeHeadingLevel(5)<CR>
+nnoremap <buffer> <C-6> <Cmd>call g:hugowiki#changeHeadingLevel(6)<CR>
 
-xnoremap <C-,> "zc<sub><C-r>z</sub><ESC>
-xnoremap <C-.> "zc<sup><C-r>z</sup><ESC>
+nnoremap <buffer> <C-,> "zs<sub><C-r>z</sub><ESC>l
+nnoremap <buffer> <C-.> "zs<sup><C-r>z</sup><ESC>l
+xnoremap <buffer> <C-,> "zc<sub><C-r>z</sub><ESC>l
+xnoremap <buffer> <C-.> "zc<sup><C-r>z</sup><ESC>l
+inoremap <buffer> <C-,> <ESC>"zs<sub><C-r>z</sub>
+inoremap <buffer> <C-.> <ESC>"zs<sup><C-r>z</sup>
+
+nnoremap <buffer> <leader>J mzjI<Backspace><ESC>`z
