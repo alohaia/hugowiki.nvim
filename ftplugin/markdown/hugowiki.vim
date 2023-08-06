@@ -38,7 +38,7 @@ if !hasmapto('<Plug>HWShiftTitlesDec')
     nmap <nowait><buffer> <Leader><< <Plug>HWShiftTitlesDec
 endif
 if !hasmapto('<Plug>HWPuncConv')
-    nmap <nowait><buffer> <Leader>. <Plug>HWPuncConv
+    nmap <nowait><buffer> <Leader>. mz<Plug>HWPuncConv`z
 endif
 
 if g:hugowiki_use_imaps == 1
@@ -79,3 +79,5 @@ inoremap <buffer> <C-,> <ESC>"zs<sub><C-r>z</sub>
 inoremap <buffer> <C-.> <ESC>"zs<sup><C-r>z</sup>
 
 nnoremap <buffer> <leader>J mzjI<Backspace><ESC>`z
+
+nnoremap <buffer> <C-g> <Cmd>lua require'hugowiki'.get_ref("r")<CR>

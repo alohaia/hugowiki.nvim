@@ -4,5 +4,5 @@
 exec 'source ' . globpath(&rtp, "ftplugin/markdown/hugowiki.vim")
 
 if g:hugowiki_rmd_auto_knit.enable
-    au BufWritePost <buffer> lua require'hugormd'.rmd_writepost()
+    au BufWritePost <buffer> lua require'hugowiki'.rmd_writepost()
 endif

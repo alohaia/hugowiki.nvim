@@ -37,18 +37,55 @@ M.rmd_writepost = function()
         end)
     )
     local read_start = vim.schedule_wrap(function(err, data)
-        -- assert(not err, err)
         if err then
             results = vim.fn.add(results, string.gsub(err, "%s+$", "") .. "\n")
             vim.notify(err, vim.log.levels.ERROR)
         end
         if data then
             results = vim.fn.add(results, string.gsub(data, "%s+$", "") .. "\n")
-            -- vim.notify(data, vim.log.levels.INFO)
         end
     end)
     vim.loop.read_start(stdout, read_start)
     vim.loop.read_start(stderr, read_start)
+end
+
+M.get_ref = function(reg)
+    -- get path
+    local root_path = vim.fn.expand(vim.g.hugowiki_home)
+    local path = vim.fn.expand("%")
+    local s1,_ = vim.regex[[\(/_\?index\)\?\.md$]]:match_str(path)
+    if s1 then
+        path = string.sub(path, string.len(root_path.."/content")+1, s1)
+    else
+        vim.notify("current file is not under the path specified by hugowiki_home: "..vim.g.hugowiki_home, vim.log.levels.ERROR)
+        return false
+    end
+
+    -- get anchor
+    local line = vim.fn.getline(".")
+    local anchor = ""
+    local s2,e2 = vim.regex[[^#\+\s.\{-}{\(.*#\zs\S*\ze\|\(.*\s\)id="\zs.\{-}\ze"\?\)}\|^#\+\s\zs.*\ze]]:match_str(line)
+    if s2 and e2 then
+        anchor = string.sub(line, s2+1, e2)
+    end
+
+    local ref = path
+    if anchor ~= "" then
+        ref = ref .. "#" .. anchor
+    end
+
+    if reg then
+        vim.fn.setreg(reg, ref)
+    end
+
+    if vim.g.hugowiki_snippy_integration == 1 then
+        local shared = require('snippy.shared')
+        shared.selected_text = ref
+    end
+
+    print("ref:", ref)
+
+    return ref
 end
 
 return M

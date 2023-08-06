@@ -10,7 +10,7 @@ let g:loaded_hugowiki = 1
 let g:hugowiki_home = get(g:, 'hugowiki_home')
 let g:hugowiki_home =
     \ strgetchar(g:hugowiki_home, strlen(g:hugowiki_home)-1) == 47
-    \ ? g:hugowiki_home[:-2] : g:hugowiki_home
+    \ ? g:hugowiki_home[:-2] : g:hugowiki_home   " remove tailing /
 
 let g:hugowiki_try_init_file = get(g:, 'hugowiki_try_init_file', 0)
 let g:hugowiki_follow_after_create = get(g:, 'hugowiki_follow_after_create', 0)
@@ -21,6 +21,7 @@ let g:hugowiki_auto_save = get(g:, 'hugowiki_auto_save', 1)
 let g:hugowiki_auto_update_lastmod = get(g:, "hugowiki_auto_update_lastmod", 1)
 let g:hugowiki_lastmod_under_date = get(g:, "hugowiki_lastmod_under_date", 1)
 let g:hugowiki_spellcheck_ignore_upcase = get(g:, "hugowiki_spellcheck_ignore_upcase", 1)
+let g:hugowiki_snippy_integration = get(g:, "hugowiki_snippy_integration", 0)
 
 function! g:hugowiki#at_home()
     return match(expand("%:p:h").'/', expand(g:hugowiki_home).'/') == 0
