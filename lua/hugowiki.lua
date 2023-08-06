@@ -52,7 +52,7 @@ end
 M.get_ref = function(reg)
     -- get path
     local root_path = vim.fn.expand(vim.g.hugowiki_home)
-    local path = vim.fn.expand("%")
+    local path = vim.fn.expand("%:p")
     local s1,_ = vim.regex[[\(/_\?index\)\?\.md$]]:match_str(path)
     if s1 then
         path = string.sub(path, string.len(root_path.."/content")+1, s1)
@@ -79,8 +79,7 @@ M.get_ref = function(reg)
     end
 
     if vim.g.hugowiki_snippy_integration == 1 then
-        local shared = require('snippy.shared')
-        shared.selected_text = ref
+        require('snippy.shared').selected_text = ref
     end
 
     print("ref:", ref)
