@@ -80,4 +80,12 @@ inoremap <buffer> <C-.> <ESC>"zs<sup><C-r>z</sup>
 
 nnoremap <buffer> <leader>J mzjI<Backspace><ESC>`z
 
+xnoremap <buffer> <C-b> "xc**<C-r>x**<ESC>
+xnoremap <buffer> <C-i> "xc*<C-r>x*<ESC>
+nnoremap <buffer> <C-b> "xciw**<C-r>x**<ESC>
+nnoremap <buffer> <C-i> "xciw*<C-r>x*<ESC>
+
+nnoremap <buffer> <M-h> "zciw{{< hdt "<C-r>z" >}}<ESC>
+xnoremap <buffer> <M-h> "zc{{< hdt "<C-r>z" >}}<ESC>
+
 nnoremap <buffer> <C-g> <Cmd>lua require'hugowiki'.get_ref("r")<CR>

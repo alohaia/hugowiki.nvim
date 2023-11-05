@@ -78,9 +78,9 @@ M.get_ref = function(reg)
         vim.fn.setreg(reg, ref)
     end
 
-    if vim.g.hugowiki_snippy_integration == 1 then
-        require('snippy.shared').selected_text = ref
-    end
+    -- if vim.g.hugowiki_snippy_integration == 1 then
+    --     require('snippy.shared').selected_text = ref
+    -- end
 
     print("ref:", ref)
 
