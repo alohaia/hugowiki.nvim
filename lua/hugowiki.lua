@@ -17,19 +17,20 @@ M.rmd_writepost = function()
     local filename = vim.fn.expand("%:p")
     filename = string.gsub(filename, vim.fn.expand(vim.g.hugowiki_home) .. "/", "")
     r_handle = vim.loop.spawn("Rscript", {
-            args = {configs.r_script, filename, string.gsub(filename, "%.Rmd$", ".md")},
+            args = {vim.fn.expand(configs.r_script), filename, string.gsub(filename, "%.Rmd$", ".md")},
             stdio = {nil, stdout, stderr},
-            cwd = configs.cwd
+            cwd = vim.fn.expand(configs.cwd)
         },
         vim.schedule_wrap(function(code, signal)
             stdout:close()
             r_handle:close()
             vim.fn.setqflist({}, 'r', {
-                title = '[hugowiki.nvim]RMarkdown knitting output',
+                title = '[hugowiki.nvim] RMarkdown knitting output',
                 lines = results
             })
             if code ~= 0 or signal ~= 0 then
                 vim.notify("Knitting failed, exit with code " .. code .. " and signal " .. signal, vim.log.levels.TRACE)
+                vim.notify(vim.fn.join(results, "\n"), vim.log.levels.ERROR)
             else
                 vim.notify("Knitting completed.", vim.log.levels.INFO)
             end
@@ -53,7 +54,7 @@ M.get_ref = function(reg)
     -- get path
     local root_path = vim.fn.expand(vim.g.hugowiki_home)
     local path = vim.fn.expand("%:p")
-    local s1,_ = vim.regex[[\(/_\?index\)\?\.md$]]:match_str(path)
+    local s1,_ = vim.regex[[\(/_\?index\)\?\.R\?md$]]:match_str(path)
     if s1 then
         path = string.sub(path, string.len(root_path.."/content")+1, s1)
     else

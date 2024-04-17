@@ -353,7 +353,7 @@ function! g:hugowiki#UpdateModTime(buf)
     let pos = searchpos('^lastmod:', 'n')[0]
 
     if date_pos[0] > header_end
-        date_pos[0] = header_end - 1
+        let date_pos[0] = header_end - 1
     endif
 
     if pos != 0 && pos < header_end " already have lastmod setted
