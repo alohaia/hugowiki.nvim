@@ -9,8 +9,8 @@ let g:loaded_hugowiki = 1
 " prepare configs
 let g:hugowiki_home = get(g:, 'hugowiki_home')
 let g:hugowiki_home =
-    \ strgetchar(g:hugowiki_home, strlen(g:hugowiki_home)-1) == 47
-    \ ? g:hugowiki_home[:-2] : g:hugowiki_home   " remove tailing /
+    \ (strgetchar(g:hugowiki_home, strlen(g:hugowiki_home)-1) == 47
+    \ ? g:hugowiki_home[:-2] : g:hugowiki_home)->expand() " remove tailing /
 
 let g:hugowiki_try_init_file = get(g:, 'hugowiki_try_init_file', 0)
 let g:hugowiki_follow_after_create = get(g:, 'hugowiki_follow_after_create', 0)
@@ -373,16 +373,45 @@ function! g:hugowiki#UpdateModTime(buf)
     endif
 endfunction
 
-function! g:hugowiki#newDiary()
-    let relpath = 'content/diary/' . strftime('%Y/%m/%d') . '/index.md'
-    if glob(expand([g:hugowiki_home, relpath]->join('/'))) == ''
-        call system(['hugo -s', g:hugowiki_home, 'new content', relpath]->join(' '))
-        echo '[hugowiki.vim] content/diary/' . strftime('%Y/%m/%d') . '/index.md created.'
+fu! g:hugowiki#new(type='content', path='')
+    let relpath = ''
+    if a:type == 'content'
+        if a:path == ''
+            let relpath = input("Page path: ", "", "dir")
+        else
+            let relpath = 'content/' . a:path
+        endif
+    elseif a:type == 'diary'
+        let relpath = 'content/diary/' . strftime('%Y/%m/%d') . '/index.md'
     else
-        echo '[hugowiki.vim] content/diary/' . strftime('%Y/%m/%d') . '/index.md already exists.'
+        echoerr "[hugowiki.vim] Unknown type"
+        return
     endif
+    let is_rmd = match(relpath, '\.Rmd$') != -1
+
+    if glob([g:hugowiki_home, relpath]->join('/')) == ''
+        call system(['hugo -s', g:hugowiki_home, 'new content',
+                    \ '"'.substitute(relpath, '\.Rmd$', '.md', '').'"'
+                    \ ]->join(' '))
+
+        if v:shell_error != 0
+            echoerr '[hugowiki.vim] failed to create ' . relpath
+            return
+        else
+            if is_rmd
+                call system(['cp',
+                            \ '"'.g:hugowiki_home.'/'.substitute(relpath, '\.Rmd$', '.md', '').'"',
+                            \ '"'.g:hugowiki_home.'/'.relpath.'"']->join(' '))
+            endif
+            echomsg '[hugowiki.vim] ' . relpath . ' created.'
+        endif
+    else
+        echoerr '[hugowiki.vim] ' . relpath . ' already exists.'
+        return
+    endif
+
     exec 'edit' g:hugowiki_home .. '/' .. relpath
-endfunction
+endf
 
 function! g:hugowiki#changeHeadingLevel(level)
     let line = getline('.')
@@ -470,4 +499,5 @@ elseif &filetype == "rmd"
     runtime! ftplugin/rmd/hugowiki.vim
 endif
 
-command! HWNewDiary call g:hugowiki#newDiary()
+command! -nargs=? -complete=dir HWNew call g:hugowiki#new('content', "<args>")
+command! HWNewDiary call g:hugowiki#new('diary')
