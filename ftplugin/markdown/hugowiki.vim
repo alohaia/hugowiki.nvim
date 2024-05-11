@@ -91,3 +91,78 @@ nnoremap <buffer> <M-h> "zciw{{< hdt "<C-r>z" >}}<ESC>
 xnoremap <buffer> <M-h> "zc{{< hdt "<C-r>z" >}}<ESC>
 
 nnoremap <buffer> <C-g> <Cmd>lua require'hugowiki'.get_ref("r")<CR>
+
+lua << END
+local pickers = require "telescope.pickers"
+local finders = require "telescope.finders"
+local conf = require("telescope.config").values
+local actions = require "telescope.actions"
+local action_state = require "telescope.actions.state"
+local themes = require("telescope.themes")
+
+local nc = vim.fn.strcharlen
+
+local content_path = vim.g.hugowiki_home .. '/content/'
+local ext_pattern = [[\(/_\?index\)\?\.md$]]
+
+local hw_pages = function(opts)
+    opts = opts or themes.get_dropdown{
+        layout_config = {
+            width = 120,
+            height = 30
+        }
+    }
+
+    pickers.new(opts, {
+        prompt_title = "Pages",
+        finder = finders.new_table {
+            results = vim.split(vim.trim(vim.fn.system('find ' .. content_path .. ' -name "*.md"')), '\n'),
+            entry_maker = function(entry)
+                local ref = entry:sub(content_path:len())
+                local start,_ = vim.regex(ext_pattern):match_str(ref)
+
+                local main_str = ref
+                if (start) then
+                    main_str = ref:sub(1, start)
+                else
+                    vim.notify("[hugowiki]can not remove ext: " .. entry)
+                end
+
+                return {
+                    display = main_str,
+                    ordinal = main_str
+                }
+            end
+        },
+        sorter = conf.file_sorter(opts),
+        attach_mappings = function(prompt_bufnr, map)
+            actions.select_default:replace(function()
+                actions.close(prompt_bufnr)
+                local selection = action_state.get_selected_entry()
+                local s,e = vim.regex([[[^/]*$]]):match_str(selection.display)
+
+                local placeholder = selection.display
+                if (s and e) then
+                    placeholder = selection.display:sub(s+1, e)
+                else
+                    vim.notify("[hugowiki]can not extract placeholder: " .. selection.display)
+                end
+
+                local ref = string.format('[%s]({{< ref "%s" >}})', placeholder, selection.display)
+                vim.schedule(function()
+                    vim.api.nvim_paste(ref, true, -1)
+                    vim.api.nvim_feedkeys(  -- keep insert mode
+                        vim.api.nvim_replace_termcodes(
+                            string.format('%dhv%dl<C-g>', nc(ref)-2, nc(placeholder)-1),
+                            true, false, true
+                        ),
+                        'n', false)
+                end)
+            end)
+            return true
+        end,
+    }):find()
+end
+
+vim.keymap.set('i', '<C-v><C-p>', function() hw_pages() end, {buffer = true})
+END
