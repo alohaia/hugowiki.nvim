@@ -119,14 +119,8 @@ local hw_pages = function(opts)
             results = vim.split(vim.trim(vim.fn.system('find ' .. content_path .. ' -name "*.md"')), '\n'),
             entry_maker = function(entry)
                 local ref = entry:sub(content_path:len())
-                local start,_ = vim.regex(ext_pattern):match_str(ref)
-
-                local main_str = ref
-                if (start) then
-                    main_str = ref:sub(1, start)
-                else
-                    vim.notify("[hugowiki]can not remove ext: " .. entry)
-                end
+                local s,_ = vim.regex(ext_pattern):match_str(ref)
+                local main_str = ref:sub(1, s)
 
                 return {
                     display = main_str,
@@ -140,13 +134,7 @@ local hw_pages = function(opts)
                 actions.close(prompt_bufnr)
                 local selection = action_state.get_selected_entry()
                 local s,e = vim.regex([[[^/]*$]]):match_str(selection.display)
-
-                local placeholder = selection.display
-                if (s and e) then
-                    placeholder = selection.display:sub(s+1, e)
-                else
-                    vim.notify("[hugowiki]can not extract placeholder: " .. selection.display)
-                end
+                local placeholder = selection.display:sub(s+1, e)
 
                 local ref = string.format('[%s]({{< ref "%s" >}})', placeholder, selection.display)
                 vim.schedule(function()
