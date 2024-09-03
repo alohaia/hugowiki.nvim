@@ -138,7 +138,10 @@ hi link HWHugoTagItemBoolean Boolean
 
 "----------------------------------\ Text declaration /---------------------------------
 syn region HWInsert matchgroup=HWDelimiter oneline keepend
-    \ start=+<ins>+ end=+</ins>+ skip=+\\</ins>+
+    \ start=+<ins>+ end=+</ins>+
+    \ contains=@Spell,@CHWInline
+syn region HWInsert matchgroup=HWDelimiter oneline
+    \ start=+==+ end=+==+ skip=+\\=\\=+
     \ contains=@Spell,@CHWInline
 syn region HWDelete matchgroup=HWDelimiter oneline keepend
     \ start=+[^~]\{-}\zs\~\~+ end=+\~\~\ze[^~]\{-}+ skip=+\\\~\\\~+
@@ -152,12 +155,21 @@ syn region HWBold matchgroup=HWDelimiter oneline keepend
 syn region HWItalicBold matchgroup=HWDelimiter oneline
     \ start=+\*\*\*+ end=+\*\*\*+ skip=+\\\*\\\*\*+
     \ contains=@Spell,@CHWInline
+syn region HWSup matchgroup=HWDelimiter oneline
+    \ start=+\^+ end=+\^+ skip=+\\\^+
+    \ contains=@Spell,@CHWInline
+syn region HWSub matchgroup=HWDelimiter oneline
+    \ start=+\~+ end=+\~+ skip=+\\\~+
+    \ contains=@Spell,@CHWInline
 syn region HWHighlight matchgroup=HWDelimiter oneline
     \ start=+<mark>+ end=+</mark>+
     \ contains=@Spell,@CHWInline
+syn region HWHighlight matchgroup=HWDelimiter oneline
+    \ start=+==+ end=+==+
+    \ contains=@Spell,@CHWInline
 
 syn cluster CHWTextDeclaration
-    \ contains=HWInsert,HWDelete,HWItalic,HWBold,HWItalicBold,HWHighlight
+    \ contains=HWInsert,HWDelete,HWItalic,HWBold,HWItalicBold,HWSup,HWSub,HWHighlight
 
 hi HWInsert cterm=underline gui=underline
 hi HWDelete cterm=strikethrough gui=strikethrough ctermfg=204 guifg=#E06C75
