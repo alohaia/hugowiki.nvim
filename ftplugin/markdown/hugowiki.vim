@@ -86,7 +86,7 @@ nnoremap <buffer> <C-b> "xciw**<C-r>x**<ESC>
 nnoremap <buffer> <C-i> "xciw*<C-r>x*<ESC>
 imap <buffer> *<C-b> <ESC>vb"xc**<C-r>x**
 imap <buffer> *<C-i> <ESC>vb"xc*<C-r>x*
-
+xnoremap <expr> <C-k> @+ =~? '^https\?://' ? '"zc[<C-r>z](<C-r>+)<ESC>' : '"zc[<C-r>z]()<Left>'
 nnoremap <buffer> <M-h> "zciw{{< hdt "<C-r>z" >}}<ESC>
 xnoremap <buffer> <M-h> "zc{{< hdt "<C-r>z" >}}<ESC>
 
