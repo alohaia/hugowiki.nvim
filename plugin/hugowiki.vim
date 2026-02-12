@@ -6,22 +6,6 @@ if exists('g:loaded_hugowiki') || &compatible
 endif
 let g:loaded_hugowiki = 1
 
-" prepare configs
-let g:hugowiki_home = get(g:, 'hugowiki_home')
-let g:hugowiki_home =
-    \ (strgetchar(g:hugowiki_home, strlen(g:hugowiki_home)-1) == 47
-    \ ? g:hugowiki_home[:-2] : g:hugowiki_home)->expand() " remove tailing /
-
-let g:hugowiki_try_init_file = get(g:, 'hugowiki_try_init_file', 0)
-let g:hugowiki_follow_after_create = get(g:, 'hugowiki_follow_after_create', 0)
-let g:hugowiki_use_imaps = get(g:, 'hugowiki_use_imaps', 1)
-let g:hugowiki_disable_fold = get(g:, 'hugowiki_disable_fold', 0)
-let g:hugowiki_wrap = get(g:, 'hugowiki_wrap', 1)
-let g:hugowiki_auto_save = get(g:, 'hugowiki_auto_save', 1)
-let g:hugowiki_auto_update_lastmod = get(g:, "hugowiki_auto_update_lastmod", 1)
-let g:hugowiki_lastmod_under_date = get(g:, "hugowiki_lastmod_under_date", 1)
-let g:hugowiki_spellcheck_ignore_upcase = get(g:, "hugowiki_spellcheck_ignore_upcase", 1)
-let g:hugowiki_snippy_integration = get(g:, "hugowiki_snippy_integration", 0)
 
 function! g:hugowiki#at_home()
     return match(expand("%:p:h").'/', expand(g:hugowiki_home).'/') == 0
@@ -134,7 +118,7 @@ function! s:createFile() abort
 endfunction
 
 
-const s:subfixes = ['.Rmd', '.md', '/index.md', '/_index.md']
+let s:subfixes = ['.Rmd', '.md', '/index.md', '/_index.md']
 
 function! s:getFile(s)
     let file_path = ""
@@ -183,7 +167,7 @@ function! s:jumpToAnchor(a, flags)
 endfunction
 
 
-const s:link_patterns = [
+let s:link_patterns = [
     \ '\\\@<!\[\(\^.\{-}\)\\\@<!\]:\@!',
     \ '\\\@<!\[[^\]]\{-}\\\@<!\]({{<\s*\(rel\)\?ref\s\+"\([^#]\{-}\)\(#.\{-}\)\?"\s\+>}}\\\@<!)',
     \ '\\\@<!\[[^\]]\{-}\\\@<!\](#\(.\{-}\)\\\@<!)',
@@ -509,3 +493,8 @@ endf
 
 command! -nargs=? -complete=custom,s:available_dirs HWNew call g:hugowiki#new('content', "<args>")
 command! HWNewDiary call g:hugowiki#new('diary')
+
+
+
+
+

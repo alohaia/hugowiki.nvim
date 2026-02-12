@@ -9,6 +9,30 @@ elseif &compatible
 endif
 let b:did_hugowiki = 1
 
+" echomsg "Load markdown/hugowiki.vim"
+
+" prepare configs
+let g:hugowiki_home = get(g:, 'hugowiki_home')
+" remove tailing /
+if g:hugowiki_home =~ '/$'
+    let g:hugowiki_home = g:hugowiki_home[:-2]
+endif
+
+" echomsg "Set `g:hugowiki_home`: " . g:hugowiki_home
+
+let g:hugowiki_try_init_file = get(g:, 'hugowiki_try_init_file', 0)
+let g:hugowiki_follow_after_create = get(g:, 'hugowiki_follow_after_create', 0)
+let g:hugowiki_use_imaps = get(g:, 'hugowiki_use_imaps', 1)
+let g:hugowiki_disable_fold = get(g:, 'hugowiki_disable_fold', 0)
+let g:hugowiki_wrap = get(g:, 'hugowiki_wrap', 1)
+let g:hugowiki_auto_save = get(g:, 'hugowiki_auto_save', 1)
+let g:hugowiki_auto_update_lastmod = get(g:, "hugowiki_auto_update_lastmod", 1)
+let g:hugowiki_lastmod_under_date = get(g:, "hugowiki_lastmod_under_date", 1)
+let g:hugowiki_spellcheck_ignore_upcase = get(g:, "hugowiki_spellcheck_ignore_upcase", 1)
+let g:hugowiki_snippy_integration = get(g:, "hugowiki_snippy_integration", 0)
+
+" echomsg "Current g:hugowiki_home: " .. g:hugowiki_home
+
 if g:hugowiki_disable_fold == 0
     setlocal foldmethod=expr
     setlocal foldexpr=hugowiki#foldexpr(v:lnum)
@@ -101,6 +125,8 @@ local action_state = require "telescope.actions.state"
 local themes = require("telescope.themes")
 
 local nc = vim.fn.strcharlen
+
+-- print(vim.g.hugowiki_home)
 
 local content_path = vim.g.hugowiki_home .. '/content/'
 local ext_pattern = [[\(/_\?index\)\?\.md$]]
