@@ -1,53 +1,82 @@
 local M = {}
-M.hugowiki_rmd_knitting = false
+-- M.hugowiki_rmd_knitting = false
 local configs = vim.g.hugowiki_rmd_auto_knit
 
+local uv = vim.loop
+
+local function spawn(cmd, args, cb, cwd)
+    -- IO
+    local stdout = uv.new_pipe(false)
+    local stderr = uv.new_pipe(false)
+    local output = {}
+
+    local handle
+    handle = uv.spawn(
+        cmd,
+        { args = args, stdio = {nil, stdout, stderr}, cwd = cwd },
+        function(code, signal)
+            stdout:close()
+            handle:close()
+
+            if cb ~= nil then
+                -- wrap callback function
+                cb = vim.schedule_wrap(cb)
+                cb(output, code, signal)
+            end
+        end
+    )
+
+    -- stderr
+    uv.read_start(stderr, function(err, data)
+        -- handle read error
+        if err then
+            vim.notify("stderr read error: " .. err, vim.log.levels.ERROR)
+        end
+
+        vim.notify(data, vim.log.levels.ERROR)
+    end)
+
+    -- stdout
+    uv.read_start(stdout, function(err, data)
+        -- handle read error
+        if err then
+            vim.notify("stdout read error: " .. err, vim.log.levels.ERROR)
+        end
+
+        if data then
+            table.insert(output, data)
+        end
+    end)
+end
+
 M.rmd_writepost = function()
+    vim.notify("Start knitting", vim.fn.expand("%:p"))
     if M.hugowiki_rmd_knitting then
-        vim.notify("A knitting job is running.")
+        vim.notify("A knitting job is still running.")
         return
     end
     M.hugowiki_rmd_knitting = true
 
-    local stdout = vim.loop.new_pipe(false)
-    local stderr = vim.loop.new_pipe(false)
-    local results = {}
-
-    local r_handle
     local filename = vim.fn.expand("%:p")
     filename = string.gsub(filename, vim.fn.expand(vim.g.hugowiki_home) .. "/", "")
-    r_handle = vim.loop.spawn("Rscript", {
-            args = {vim.fn.expand(configs.r_script), filename, string.gsub(filename, "%.Rmd$", ".md")},
-            stdio = {nil, stdout, stderr},
-            cwd = vim.fn.expand(configs.cwd)
+    spawn("Rscript", {
+            vim.fn.expand(configs.r_script), filename, string.gsub(filename, "%.Rmd$", ".md")
         },
-        vim.schedule_wrap(function(code, signal)
-            stdout:close()
-            r_handle:close()
+        function(output, code, signal)
             vim.fn.setqflist({}, 'r', {
                 title = '[hugowiki.nvim] RMarkdown knitting output',
-                lines = results
+                lines = output
             })
             if code ~= 0 or signal ~= 0 then
                 vim.notify("Knitting failed, exit with code " .. code .. " and signal " .. signal, vim.log.levels.TRACE)
-                vim.notify(vim.fn.join(results, "\n"), vim.log.levels.ERROR)
+                -- vim.notify(vim.fn.join(output, "\n"), vim.log.levels.ERROR)
             else
                 vim.notify("Knitting completed.", vim.log.levels.INFO)
             end
             M.hugowiki_rmd_knitting = false
-        end)
+        end,
+        vim.fn.expand(configs.cwd)
     )
-    local read_start = vim.schedule_wrap(function(err, data)
-        if err then
-            results = vim.fn.add(results, string.gsub(err, "%s+$", "") .. "\n")
-            vim.notify(err, vim.log.levels.ERROR)
-        end
-        if data then
-            results = vim.fn.add(results, string.gsub(data, "%s+$", "") .. "\n")
-        end
-    end)
-    vim.loop.read_start(stdout, read_start)
-    vim.loop.read_start(stderr, read_start)
 end
 
 M.get_ref = function(reg)

@@ -1,11 +1,19 @@
 " Vim plugin for writing hugo posts
 " Maintainer: Qihuan Liu <liu.qihuan@outlook.com>
 
-" echomsg "Load rmd/hugowiki.vim"
-" echomsg "Current g:hugowiki_home: " . g:hugowiki_home
+if exists("b:did_ftplugin_rmd_hugowiki")
+  finish
+elseif &compatible
+    echoerr "Only support Nvim."
+    finish
+endif
+let b:did_ftplugin_rmd_hugowiki = 1
 
 exec 'source ' . globpath(&rtp, "ftplugin/markdown/hugowiki.vim")
 
 if g:hugowiki_rmd_auto_knit.enable && match(expand("%:p"), g:hugowiki_home) != -1
-    au BufWritePost <buffer> lua require'hugowiki'.rmd_writepost()
+    augroup hugowiki_knit_rmarkdown
+        au!
+        au BufWritePost <buffer> lua require'hugowiki'.rmd_writepost()
+    augroup END
 endif

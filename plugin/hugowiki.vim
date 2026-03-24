@@ -485,7 +485,7 @@ endif
 
 fu! s:available_dirs(A,L,P)
     let dir_list = globpath(g:hugowiki_home, "**/_index.{R,}md", 1, 1)
-    let remove_pattern = "^" .. escape(expand(g:hugowiki_home), '^$.*?\[]~') .. '/content/\|_index\.R\?md$'
+    let remove_pattern = "^" .. escape(globpath(g:hugowiki_home, 'content/'), '^$.*?\[]~') .. '\|_index\.R\?md$'
     let dir_list = map(dir_list, 'substitute(v:val, '''.. remove_pattern .. ''', "", "g")')
     let dir_list = map(dir_list, 'substitute(v:val, " ", ''\\ '', "g")')
     return join(dir_list, "\n")
